@@ -1,0 +1,3 @@
+The reproducibles were written by Simon Foucart (SF), Chunyang Liao (CL), Tushar Pandey (TP), ... . The precise contributions are from:
+
+Chapter 01: SF and CL
