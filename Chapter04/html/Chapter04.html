@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Chapter04</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-08-25"><meta name="DC.source" content="Chapter04.m"><style type="text/css">
+      --><title>Chapter04</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-09-01"><meta name="DC.source" content="Chapter04.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">The case of two linearly separable classes</a></li><li><a href="#3">generate the data</a></li><li><a href="#4">separating "hyperplane" produced by a linear feasibility problem</a></li><li><a href="#5">separating "hyperplane" produced by the perceptron algorithm</a></li><li><a href="#6">separating "hyperplane" produced by hard SVM</a></li><li><a href="#7">The case of two almost linearly separable classes</a></li><li><a href="#8">generate the data</a></li><li><a href="#9">"hyperplane" produced by soft SVM</a></li><li><a href="#10">First case of two classes clearly not linearly separable</a></li><li><a href="#11">generate the data</a></li><li><a href="#12">Soft SVM with a polynomial kernel</a></li><li><a href="#13">Second case of two classes clearly not linearly separable</a></li><li><a href="#14">generate the data</a></li><li><a href="#15">Soft SVM with a polynomial kernel</a></li></ul></div><pre class="codeinput"><span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">The case of two linearly separable classes</a></li><li><a href="#3">generate the data</a></li><li><a href="#4">separating "hyperplane" produced by a linear feasibility problem</a></li><li><a href="#5">separating "hyperplane" produced by the perceptron algorithm</a></li><li><a href="#6">separating "hyperplane" produced by hard SVM</a></li><li><a href="#7">The case of two almost linearly separable classes</a></li><li><a href="#8">generate the data</a></li><li><a href="#9">"hyperplane" produced by soft SVM</a></li><li><a href="#10">First case of two classes clearly not linearly separable</a></li><li><a href="#11">generate the data</a></li><li><a href="#12">Soft SVM with a polynomial kernel</a></li><li><a href="#13">Second case of two classes clearly not linearly separable</a></li><li><a href="#14">generate the data</a></li><li><a href="#15">Soft SVM with a gaussian kernel</a></li></ul></div><pre class="codeinput"><span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
 <span class="comment">%   Computational Illustration for Chapter 04</span>
 <span class="comment">%            Support Vector Machines</span>
 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
@@ -85,41 +85,37 @@ hold <span class="string">on</span>
 </pre><img vspace="5" hspace="5" src="Chapter04_01.png" style="width:560px;height:420px;" alt=""> <h2>separating "hyperplane" produced by a linear feasibility problem<a name="4"></a></h2><pre class="codeinput">cvx_quiet <span class="string">true</span>
 <span class="comment">%cvx_solver gurobi            % uncomment if gurobi is to be used</span>
 cvx_begin
-variable <span class="string">w_f(2)</span>
-variable <span class="string">b_f</span>
+variable <span class="string">w_feas(2)</span>
+variable <span class="string">b_feas</span>
 minimize <span class="string">1</span>
 subject <span class="string">to</span>
-X0*w_f-b_f &lt;= -1;
-X1*w_f-b_f &gt;= +1;
+X0*w_feas-b_feas &lt;= -1;
+X1*w_feas-b_feas &gt;= +1;
 cvx_end
 <span class="comment">% visualize the "hyperplane" (in green)</span>
 grid_x = 0:0.1:2;
-plot(grid_x,(-w_f(1)*grid_x+b_f)/w_f(2),<span class="string">'g'</span>);
-</pre><pre class="codeoutput">Warning: The following errors were issued when initializing the solvers:
-    Gurobi: No valid Gurobi license was found.
-Please check your installation and re-run CVX_SETUP.
-These solvers are unavailable for this session. 
+plot(grid_x,(-w_feas(1)*grid_x+b_feas)/w_feas(2),<span class="string">'g'</span>);
 </pre><img vspace="5" hspace="5" src="Chapter04_02.png" style="width:560px;height:420px;" alt=""> <h2>separating "hyperplane" produced by the perceptron algorithm<a name="5"></a></h2><pre class="codeinput">X = [X0 ones(m0,1); X1 ones(m1,1)];
 y = [-ones(m0,1); +ones(m1,1)];
-w_p = zeros(3,1);
-obj = y.*(X*w_p);     <span class="comment">% to be entrywise positive at the end on the loop</span>
+w_perc = zeros(3,1);
+obj = y.*(X*w_perc);     <span class="comment">% to be entrywise positive at the end on the loop</span>
 <span class="keyword">while</span> min(obj) &lt;= 0;
     [~,i] = min(obj);
-    w_p = w_p + (y(i)/norm(X(i,:))^2)*X(i,:)';
-    obj = y.*(X*w_p);
+    w_perc = w_perc + (y(i)/norm(X(i,:))^2)*X(i,:)';
+    obj = y.*(X*w_perc);
 <span class="keyword">end</span>
 <span class="comment">% visualize the "hyperplane" (in black)</span>
-plot(grid_x,(-w_p(1)*grid_x-w_p(3))/w_p(2),<span class="string">'k'</span>);
+plot(grid_x,(-w_perc(1)*grid_x-w_perc(3))/w_perc(2),<span class="string">'k'</span>);
 </pre><img vspace="5" hspace="5" src="Chapter04_03.png" style="width:560px;height:420px;" alt=""> <h2>separating "hyperplane" produced by hard SVM<a name="6"></a></h2><pre class="codeinput">cvx_begin
-variable <span class="string">w_h(2)</span>
-variable <span class="string">b_h</span>
-minimize <span class="string">norm(w_h)</span>
+variable <span class="string">w_hard(2)</span>
+variable <span class="string">b_hard</span>
+minimize <span class="string">norm(w_hard)</span>
 subject <span class="string">to</span>
-X0*w_h-b_h &lt;= -1;
-X1*w_h-b_h &gt;= +1;
+X0*w_hard-b_hard &lt;= -1;
+X1*w_hard-b_hard &gt;= +1;
 cvx_end
 <span class="comment">% visualize the "hyperplane" (in magenta)</span>
-plot(grid_x,(-w_h(1)*grid_x+b_h)/w_h(2),<span class="string">'m'</span>);
+plot(grid_x,(-w_hard(1)*grid_x+b_hard)/w_hard(2),<span class="string">'m'</span>);
 </pre><img vspace="5" hspace="5" src="Chapter04_04.png" style="width:560px;height:420px;" alt=""> <h2>The case of two almost linearly separable classes<a name="7"></a></h2><p>blue dots labeled negatively, red crosses labeled positively</p><h2>generate the data<a name="8"></a></h2><pre class="codeinput">clear <span class="string">all</span>; clc;
 m0 = 100;
 m1 = 50;
@@ -136,21 +132,17 @@ hold <span class="string">on</span>
 <span class="comment">%cvx_solver gurobi            % uncomment if gurobi is to be used</span>
 lambda = 1e-3;
 cvx_begin
-variable <span class="string">w_s(2)</span>
-variable <span class="string">b_s</span>
-variable <span class="string">xi_s(m0+m1)</span> <span class="string">nonnegative</span>
-minimize <span class="string">norm(w_s)</span> <span class="string">+</span> <span class="string">(1/lambda)*sum(xi_s)</span>
+variable <span class="string">w_soft(2)</span>
+variable <span class="string">b_soft</span>
+variable <span class="string">xi_soft(m0+m1)</span> <span class="string">nonnegative</span>
+minimize <span class="string">sum(w_soft.*w_soft)</span> <span class="string">+</span> <span class="string">(1/lambda)*sum(xi_soft)</span>
 subject <span class="string">to</span>
-X0*w_s-b_s &lt;= -1 + xi_s(1:m0);
-X1*w_s-b_s &gt;= +1 - xi_s(m0+1:end);
+X0*w_soft-b_soft &lt;= -1 + xi_soft(1:m0);
+X1*w_soft-b_soft &gt;= +1 - xi_soft(m0+1:end);
 cvx_end
 <span class="comment">% visualize the "hyperplane" (in black)</span>
 grid_x = 0:0.1:2;
-plot(grid_x,(-w_s(1)*grid_x+b_s)/w_s(2),<span class="string">'k'</span>);
-</pre><pre class="codeoutput">Warning: The following errors were issued when initializing the solvers:
-    Gurobi: No valid Gurobi license was found.
-Please check your installation and re-run CVX_SETUP.
-These solvers are unavailable for this session. 
+plot(grid_x,(-w_soft(1)*grid_x+b_soft)/w_soft(2),<span class="string">'k'</span>);
 </pre><img vspace="5" hspace="5" src="Chapter04_06.png" style="width:560px;height:420px;" alt=""> <h2>First case of two classes clearly not linearly separable<a name="10"></a></h2><p>blue dots labeled negatively, red crosses labeled positively</p><h2>generate the data<a name="11"></a></h2><pre class="codeinput">clear <span class="string">all</span>; clc;
 m0 = 100;
 m1 = 50;
@@ -165,26 +157,22 @@ plot(X0(:,1),X0(:,2),<span class="string">'bo'</span>,X1(:,1),X1(:,2),<span clas
 hold <span class="string">on</span>
 </pre><img vspace="5" hspace="5" src="Chapter04_07.png" style="width:560px;height:420px;" alt=""> <h2>Soft SVM with a polynomial kernel<a name="12"></a></h2><pre class="codeinput">X = [X0; X1];
 y = [-ones(m0,1); +ones(m1,1)];
-K = (1 + X*X').^3;
+K_poly = (1 + X*X').^3;
 cvx_quiet <span class="string">true</span>
 lambda = 1e-3;
 cvx_begin
-variable <span class="string">a_p(m0+m1)</span>
-variable <span class="string">b_p</span>
-variable <span class="string">xi_p(m0+m1)</span> <span class="string">nonnegative</span>
-minimize ( a_p'*K*a_p + (1/lambda)*sum(xi_p) )
+variable <span class="string">a_poly(m0+m1)</span>
+variable <span class="string">b_poly</span>
+variable <span class="string">xi_poly(m0+m1)</span> <span class="string">nonnegative</span>
+minimize ( a_poly'*K_poly*a_poly + (1/lambda)*sum(xi_poly) )
 subject <span class="string">to</span>
-y.*(K*a_p-b_p) &gt;= 1-xi_p
+y.*(K_poly*a_poly-b_poly) &gt;= 1-xi_poly
 cvx_end
 <span class="comment">% visualize the separating surface</span>
-f = @(u,v) a_p'*(1+X*[u;v]).^3 - b_p;
+f = @(u,v) a_poly'*(1+X*[u;v]).^3 - b_poly;
 ezplot(f,[0,6,-2,2])
 title(<span class="string">''</span>)
-</pre><pre class="codeoutput">Warning: The following errors were issued when initializing the solvers:
-    Gurobi: No valid Gurobi license was found.
-Please check your installation and re-run CVX_SETUP.
-These solvers are unavailable for this session. 
-Warning: Function failed to evaluate on array inputs; vectorizing the function
+</pre><pre class="codeoutput">Warning: Function failed to evaluate on array inputs; vectorizing the function
 may speed up its evaluation and avoid the need to loop over array elements. 
 </pre><img vspace="5" hspace="5" src="Chapter04_08.png" style="width:560px;height:420px;" alt=""> <h2>Second case of two classes clearly not linearly separable<a name="13"></a></h2><p>blue dots labeled negatively, red crosses labeled positively</p><h2>generate the data<a name="14"></a></h2><pre class="codeinput">clear <span class="string">all</span>; clc;
 m0 = 50;
@@ -199,33 +187,30 @@ y = [-ones(m0,1); +ones(m1,1)];
 figure(4)
 plot(X(1:m0,1),X(1:m0,2),<span class="string">'bo'</span>,X(m0+1:end,1),X(m0+1:end,2),<span class="string">'r+'</span>)
 hold <span class="string">on</span>
-</pre><img vspace="5" hspace="5" src="Chapter04_09.png" style="width:560px;height:420px;" alt=""> <h2>Soft SVM with a polynomial kernel<a name="15"></a></h2><pre class="codeinput">sigma = 1;
+</pre><img vspace="5" hspace="5" src="Chapter04_09.png" style="width:560px;height:420px;" alt=""> <h2>Soft SVM with a gaussian kernel<a name="15"></a></h2><pre class="codeinput">sigma = 1;
 m = m0+m1;
-K = zeros(m,m);
+K_gauss = zeros(m,m);
 <span class="keyword">for</span> i = 1:m
     <span class="keyword">for</span> j = 1:m
-    K(i,j) = exp(-norm(X(i,:)-X(j,:))^2/2/sigma^2);
+    K_gauss(i,j) = exp(-norm(X(i,:)-X(j,:))^2/2/sigma^2);
     <span class="keyword">end</span>
 <span class="keyword">end</span>
 cvx_quiet <span class="string">true</span>
 lambda = 2e-1;
 cvx_begin
-variable <span class="string">a_g(m)</span>
-variable <span class="string">b_g</span>
-variable <span class="string">xi_g(m)</span> <span class="string">nonnegative</span>
-minimize ( a_g'*K*a_g + (1/lambda)*sum(xi_g) )
+variable <span class="string">a_gauss(m)</span>
+variable <span class="string">b_gauss</span>
+variable <span class="string">xi_gauss(m)</span> <span class="string">nonnegative</span>
+minimize ( a_gauss'*K_gauss*a_gauss + (1/lambda)*sum(xi_gauss) )
 subject <span class="string">to</span>
-y.*(K*a_g-b_g) &gt;= 1-xi_g
+y.*(K_gauss*a_gauss-b_gauss) &gt;= 1-xi_gauss
 cvx_end
 <span class="comment">% visualize the separating surface</span>
-f = @(u,v) a_g'*exp( -(diag(X*X') - 2*X*[u;v] + u^2+v^2)/2/sigma^2 ) - b_g;
+f = @(u,v) a_gauss'*exp( -(diag(X*X') - 2*X*[u;v] + u^2+v^2)/2/sigma^2 )<span class="keyword">...</span>
+    - b_gauss;
 ezplot(f,[-2,2,-2,2])
 title(<span class="string">''</span>)
-</pre><pre class="codeoutput">Warning: The following errors were issued when initializing the solvers:
-    Gurobi: No valid Gurobi license was found.
-Please check your installation and re-run CVX_SETUP.
-These solvers are unavailable for this session. 
-Warning: Function failed to evaluate on array inputs; vectorizing the function
+</pre><pre class="codeoutput">Warning: Function failed to evaluate on array inputs; vectorizing the function
 may speed up its evaluation and avoid the need to loop over array elements. 
 </pre><img vspace="5" hspace="5" src="Chapter04_10.png" style="width:560px;height:420px;" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
@@ -255,41 +240,42 @@ hold on
 cvx_quiet true
 %cvx_solver gurobi            % uncomment if gurobi is to be used
 cvx_begin
-variable w_f(2)
-variable b_f
+variable w_feas(2)
+variable b_feas
 minimize 1
 subject to
-X0*w_f-b_f <= -1;
-X1*w_f-b_f >= +1;
+X0*w_feas-b_feas <= -1;
+X1*w_feas-b_feas >= +1;
 cvx_end
 % visualize the "hyperplane" (in green)
 grid_x = 0:0.1:2;
-plot(grid_x,(-w_f(1)*grid_x+b_f)/w_f(2),'g');
+plot(grid_x,(-w_feas(1)*grid_x+b_feas)/w_feas(2),'g');
 
 %% separating "hyperplane" produced by the perceptron algorithm
 X = [X0 ones(m0,1); X1 ones(m1,1)];
 y = [-ones(m0,1); +ones(m1,1)];
-w_p = zeros(3,1);
-obj = y.*(X*w_p);     % to be entrywise positive at the end on the loop 
+w_perc = zeros(3,1);
+obj = y.*(X*w_perc);     % to be entrywise positive at the end on the loop 
 while min(obj) <= 0;
     [~,i] = min(obj);
-    w_p = w_p + (y(i)/norm(X(i,:))^2)*X(i,:)';
-    obj = y.*(X*w_p);
+    w_perc = w_perc + (y(i)/norm(X(i,:))^2)*X(i,:)';
+    obj = y.*(X*w_perc);
 end
 % visualize the "hyperplane" (in black)
-plot(grid_x,(-w_p(1)*grid_x-w_p(3))/w_p(2),'k');
+plot(grid_x,(-w_perc(1)*grid_x-w_perc(3))/w_perc(2),'k');
 
 %% separating "hyperplane" produced by hard SVM
 cvx_begin
-variable w_h(2)
-variable b_h
-minimize norm(w_h)
+variable w_hard(2)
+variable b_hard
+minimize norm(w_hard)
 subject to 
-X0*w_h-b_h <= -1;
-X1*w_h-b_h >= +1;
+X0*w_hard-b_hard <= -1;
+X1*w_hard-b_hard >= +1;
 cvx_end
 % visualize the "hyperplane" (in magenta)
-plot(grid_x,(-w_h(1)*grid_x+b_h)/w_h(2),'m');
+plot(grid_x,(-w_hard(1)*grid_x+b_hard)/w_hard(2),'m');
+
 
 %% The case of two almost linearly separable classes
 % blue dots labeled negatively, red crosses labeled positively
@@ -313,17 +299,18 @@ cvx_quiet true
 %cvx_solver gurobi            % uncomment if gurobi is to be used
 lambda = 1e-3;
 cvx_begin
-variable w_s(2)
-variable b_s
-variable xi_s(m0+m1) nonnegative
-minimize norm(w_s) + (1/lambda)*sum(xi_s)
+variable w_soft(2)
+variable b_soft
+variable xi_soft(m0+m1) nonnegative
+minimize sum(w_soft.*w_soft) + (1/lambda)*sum(xi_soft)
 subject to 
-X0*w_s-b_s <= -1 + xi_s(1:m0);
-X1*w_s-b_s >= +1 - xi_s(m0+1:end);
+X0*w_soft-b_soft <= -1 + xi_soft(1:m0);
+X1*w_soft-b_soft >= +1 - xi_soft(m0+1:end);
 cvx_end
 % visualize the "hyperplane" (in black)
 grid_x = 0:0.1:2;
-plot(grid_x,(-w_s(1)*grid_x+b_s)/w_s(2),'k');
+plot(grid_x,(-w_soft(1)*grid_x+b_soft)/w_soft(2),'k');
+
 
 %% First case of two classes clearly not linearly separable
 % blue dots labeled negatively, red crosses labeled positively
@@ -345,21 +332,22 @@ hold on
 %% Soft SVM with a polynomial kernel
 X = [X0; X1];
 y = [-ones(m0,1); +ones(m1,1)];
-K = (1 + X*X').^3;
+K_poly = (1 + X*X').^3;
 cvx_quiet true
 lambda = 1e-3;
 cvx_begin
-variable a_p(m0+m1)
-variable b_p
-variable xi_p(m0+m1) nonnegative
-minimize ( a_p'*K*a_p + (1/lambda)*sum(xi_p) )
+variable a_poly(m0+m1)
+variable b_poly
+variable xi_poly(m0+m1) nonnegative
+minimize ( a_poly'*K_poly*a_poly + (1/lambda)*sum(xi_poly) )
 subject to
-y.*(K*a_p-b_p) >= 1-xi_p
+y.*(K_poly*a_poly-b_poly) >= 1-xi_poly
 cvx_end
 % visualize the separating surface
-f = @(u,v) a_p'*(1+X*[u;v]).^3 - b_p;
+f = @(u,v) a_poly'*(1+X*[u;v]).^3 - b_poly;
 ezplot(f,[0,6,-2,2])
 title('')
+
 
 %% Second case of two classes clearly not linearly separable
 % blue dots labeled negatively, red crosses labeled positively
@@ -379,28 +367,29 @@ figure(4)
 plot(X(1:m0,1),X(1:m0,2),'bo',X(m0+1:end,1),X(m0+1:end,2),'r+')
 hold on
 
-%% Soft SVM with a polynomial kernel
+%% Soft SVM with a gaussian kernel
 
 sigma = 1;
 m = m0+m1;
-K = zeros(m,m);
+K_gauss = zeros(m,m);
 for i = 1:m
     for j = 1:m
-    K(i,j) = exp(-norm(X(i,:)-X(j,:))^2/2/sigma^2);
+    K_gauss(i,j) = exp(-norm(X(i,:)-X(j,:))^2/2/sigma^2);
     end
 end
 cvx_quiet true
 lambda = 2e-1;
 cvx_begin
-variable a_g(m)
-variable b_g
-variable xi_g(m) nonnegative
-minimize ( a_g'*K*a_g + (1/lambda)*sum(xi_g) )
+variable a_gauss(m)
+variable b_gauss
+variable xi_gauss(m) nonnegative
+minimize ( a_gauss'*K_gauss*a_gauss + (1/lambda)*sum(xi_gauss) )
 subject to
-y.*(K*a_g-b_g) >= 1-xi_g
+y.*(K_gauss*a_gauss-b_gauss) >= 1-xi_gauss
 cvx_end
 % visualize the separating surface
-f = @(u,v) a_g'*exp( -(diag(X*X') - 2*X*[u;v] + u^2+v^2)/2/sigma^2 ) - b_g; 
+f = @(u,v) a_gauss'*exp( -(diag(X*X') - 2*X*[u;v] + u^2+v^2)/2/sigma^2 )...
+    - b_gauss; 
 ezplot(f,[-2,2,-2,2])
 title('')
 ##### SOURCE END #####
