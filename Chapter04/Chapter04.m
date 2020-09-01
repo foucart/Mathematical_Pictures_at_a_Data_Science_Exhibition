@@ -24,41 +24,42 @@ hold on
 cvx_quiet true
 %cvx_solver gurobi            % uncomment if gurobi is to be used
 cvx_begin
-variable w_f(2)
-variable b_f
+variable w_feas(2)
+variable b_feas
 minimize 1
 subject to
-X0*w_f-b_f <= -1;
-X1*w_f-b_f >= +1;
+X0*w_feas-b_feas <= -1;
+X1*w_feas-b_feas >= +1;
 cvx_end
 % visualize the "hyperplane" (in green)
 grid_x = 0:0.1:2;
-plot(grid_x,(-w_f(1)*grid_x+b_f)/w_f(2),'g');
+plot(grid_x,(-w_feas(1)*grid_x+b_feas)/w_feas(2),'g');
 
 %% separating "hyperplane" produced by the perceptron algorithm
 X = [X0 ones(m0,1); X1 ones(m1,1)];
 y = [-ones(m0,1); +ones(m1,1)];
-w_p = zeros(3,1);
-obj = y.*(X*w_p);     % to be entrywise positive at the end on the loop 
+w_perc = zeros(3,1);
+obj = y.*(X*w_perc);     % to be entrywise positive at the end on the loop 
 while min(obj) <= 0;
     [~,i] = min(obj);
-    w_p = w_p + (y(i)/norm(X(i,:))^2)*X(i,:)';
-    obj = y.*(X*w_p);
+    w_perc = w_perc + (y(i)/norm(X(i,:))^2)*X(i,:)';
+    obj = y.*(X*w_perc);
 end
 % visualize the "hyperplane" (in black)
-plot(grid_x,(-w_p(1)*grid_x-w_p(3))/w_p(2),'k');
+plot(grid_x,(-w_perc(1)*grid_x-w_perc(3))/w_perc(2),'k');
 
 %% separating "hyperplane" produced by hard SVM
 cvx_begin
-variable w_h(2)
-variable b_h
-minimize norm(w_h)
+variable w_hard(2)
+variable b_hard
+minimize norm(w_hard)
 subject to 
-X0*w_h-b_h <= -1;
-X1*w_h-b_h >= +1;
+X0*w_hard-b_hard <= -1;
+X1*w_hard-b_hard >= +1;
 cvx_end
 % visualize the "hyperplane" (in magenta)
-plot(grid_x,(-w_h(1)*grid_x+b_h)/w_h(2),'m');
+plot(grid_x,(-w_hard(1)*grid_x+b_hard)/w_hard(2),'m');
+
 
 %% The case of two almost linearly separable classes
 % blue dots labeled negatively, red crosses labeled positively
@@ -82,17 +83,18 @@ cvx_quiet true
 %cvx_solver gurobi            % uncomment if gurobi is to be used
 lambda = 1e-3;
 cvx_begin
-variable w_s(2)
-variable b_s
-variable xi_s(m0+m1) nonnegative
-minimize norm(w_s) + (1/lambda)*sum(xi_s)
+variable w_soft(2)
+variable b_soft
+variable xi_soft(m0+m1) nonnegative
+minimize sum(w_soft.*w_soft) + (1/lambda)*sum(xi_soft)
 subject to 
-X0*w_s-b_s <= -1 + xi_s(1:m0);
-X1*w_s-b_s >= +1 - xi_s(m0+1:end);
+X0*w_soft-b_soft <= -1 + xi_soft(1:m0);
+X1*w_soft-b_soft >= +1 - xi_soft(m0+1:end);
 cvx_end
 % visualize the "hyperplane" (in black)
 grid_x = 0:0.1:2;
-plot(grid_x,(-w_s(1)*grid_x+b_s)/w_s(2),'k');
+plot(grid_x,(-w_soft(1)*grid_x+b_soft)/w_soft(2),'k');
+
 
 %% First case of two classes clearly not linearly separable
 % blue dots labeled negatively, red crosses labeled positively
@@ -114,21 +116,22 @@ hold on
 %% Soft SVM with a polynomial kernel
 X = [X0; X1];
 y = [-ones(m0,1); +ones(m1,1)];
-K = (1 + X*X').^3;
+K_poly = (1 + X*X').^3;
 cvx_quiet true
 lambda = 1e-3;
 cvx_begin
-variable a_p(m0+m1)
-variable b_p
-variable xi_p(m0+m1) nonnegative
-minimize ( a_p'*K*a_p + (1/lambda)*sum(xi_p) )
+variable a_poly(m0+m1)
+variable b_poly
+variable xi_poly(m0+m1) nonnegative
+minimize ( a_poly'*K_poly*a_poly + (1/lambda)*sum(xi_poly) )
 subject to
-y.*(K*a_p-b_p) >= 1-xi_p
+y.*(K_poly*a_poly-b_poly) >= 1-xi_poly
 cvx_end
 % visualize the separating surface
-f = @(u,v) a_p'*(1+X*[u;v]).^3 - b_p;
+f = @(u,v) a_poly'*(1+X*[u;v]).^3 - b_poly;
 ezplot(f,[0,6,-2,2])
 title('')
+
 
 %% Second case of two classes clearly not linearly separable
 % blue dots labeled negatively, red crosses labeled positively
@@ -148,27 +151,28 @@ figure(4)
 plot(X(1:m0,1),X(1:m0,2),'bo',X(m0+1:end,1),X(m0+1:end,2),'r+')
 hold on
 
-%% Soft SVM with a polynomial kernel
+%% Soft SVM with a gaussian kernel
 
 sigma = 1;
 m = m0+m1;
-K = zeros(m,m);
+K_gauss = zeros(m,m);
 for i = 1:m
     for j = 1:m
-    K(i,j) = exp(-norm(X(i,:)-X(j,:))^2/2/sigma^2);
+    K_gauss(i,j) = exp(-norm(X(i,:)-X(j,:))^2/2/sigma^2);
     end
 end
 cvx_quiet true
 lambda = 2e-1;
 cvx_begin
-variable a_g(m)
-variable b_g
-variable xi_g(m) nonnegative
-minimize ( a_g'*K*a_g + (1/lambda)*sum(xi_g) )
+variable a_gauss(m)
+variable b_gauss
+variable xi_gauss(m) nonnegative
+minimize ( a_gauss'*K_gauss*a_gauss + (1/lambda)*sum(xi_gauss) )
 subject to
-y.*(K*a_g-b_g) >= 1-xi_g
+y.*(K_gauss*a_gauss-b_gauss) >= 1-xi_gauss
 cvx_end
 % visualize the separating surface
-f = @(u,v) a_g'*exp( -(diag(X*X') - 2*X*[u;v] + u^2+v^2)/2/sigma^2 ) - b_g; 
+f = @(u,v) a_gauss'*exp( -(diag(X*X') - 2*X*[u;v] + u^2+v^2)/2/sigma^2 )...
+    - b_gauss; 
 ezplot(f,[-2,2,-2,2])
 title('')
