@@ -1,1 +1,410 @@
 
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Chapter07</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-09-11"><meta name="DC.source" content="Chapter07.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Illustration of single-linkage and Lloyd's algorithm</a></li><li><a href="#3">generate clustered data</a></li><li><a href="#4">naive implementation of the single-linkage algorithm</a></li><li><a href="#5">naive implementation of Lloyd's algorithm</a></li><li><a href="#6">Illustration of spectral clustering</a></li><li><a href="#7">generate two communites and their connections with the stochastic block model</a></li><li><a href="#8">Cluster according to the leading eigenvector of W - delta*ones(n,n)</a></li><li><a href="#9">There seems to be no errors at all when m is large enough!</a></li></ul></div><pre class="codeinput"><span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="comment">% Computational illustration for Chapter 07</span>
+<span class="comment">%              Clustering</span>
+<span class="comment">% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+clear <span class="string">all</span>; clc;
+</pre><h2>Illustration of single-linkage and Lloyd's algorithm<a name="2"></a></h2><h2>generate clustered data<a name="3"></a></h2><pre class="codeinput">k = 5;                            <span class="comment">% number of clusters</span>
+M = randi(25,1,k);                <span class="comment">% numbers of datapoints per cluster</span>
+m = sum(M);                       <span class="comment">% total number of datapoints</span>
+X = [];                           <span class="comment">% dxm matrix to hold the datapoints (d=3)</span>
+<span class="keyword">for</span> h = 1:k
+    center_h = [cos(2*pi/k*h); sin(2*pi/k*h); .05*rand];
+    radius_h = rand/h;
+    X_h = [center_h(1) + radius_h*randn(1,M(h));<span class="keyword">...</span>
+           center_h(2) + radius_h*randn(1,M(h));
+           center_h(3) + .05*randn(1,M(h))];
+    X = [X X_h];
+<span class="keyword">end</span>
+<span class="comment">% shuffle the datapoints</span>
+X = X(:,randperm(m));
+<span class="comment">% store all pairwise distances into a matrix</span>
+dist = zeros(m,m);
+<span class="keyword">for</span> i=1:m
+    <span class="keyword">for</span> j=1:m
+        dist(i,j) = norm(X(:,i)-X(:,j));
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+<span class="comment">% visualize the original clusters</span>
+figure(1)
+plot3(X(1,:),X(2,:),X(3,:),<span class="string">'*k'</span>)
+title(<span class="string">'Clustered datapoints'</span>)
+</pre><img vspace="5" hspace="5" src="Chapter07_01.png" style="width:560px;height:420px;" alt=""> <h2>naive implementation of the single-linkage algorithm<a name="4"></a></h2><pre class="codeinput">partition_sl = eye(m);               <span class="comment">% its columns will hold the clusters</span>
+<span class="keyword">for</span> t=0:m-k-1
+    d = inf(m-t);                    <span class="comment">% matrix of distances between clusters</span>
+    <span class="keyword">for</span> i=1:m-t-1
+        C_i = find(partition_sl(:,i));
+        <span class="keyword">for</span> j=i+1:m-t
+            C_j = find(partition_sl(:,j));
+            aux = min(min(dist(C_i,C_j)));
+            d(i,j) = aux;
+            d(j,i) = aux;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    [~,j] = min(min(d));
+    [~,i] = min(d(:,j));
+    partition_sl(:,i) = partition_sl(:,i)+partition_sl(:,j); <span class="comment">% merge C_i, C_j</span>
+    partition_sl(:,j) = [];                                  <span class="comment">% remove C_j</span>
+<span class="keyword">end</span>
+<span class="comment">% visualize the ouputted clusters</span>
+figure(2)
+<span class="keyword">for</span> h=1:k
+    C_h = find(partition_sl(:,h));
+    plot3(X(1,C_h),X(2,C_h),X(3,C_h),<span class="string">'+'</span>);
+    hold <span class="string">on</span>
+<span class="keyword">end</span>
+title(<span class="string">'Clusters produced by single linkage'</span>)
+</pre><img vspace="5" hspace="5" src="Chapter07_02.png" style="width:560px;height:420px;" alt=""> <h2>naive implementation of Lloyd's algorithm<a name="5"></a></h2><pre class="codeinput">centers = [4*rand(2,k)-2; zeros(1,k)];   <span class="comment">% dxk matrix to holds the centers (d=3)</span>
+partition_l = zeros(m,k);                <span class="comment">% its columns will hold the clusters</span>
+n_iters = 100;                           <span class="comment">% number of iterations</span>
+<span class="keyword">for</span> t=1:n_iters
+    dist = zeros(k,m);                   <span class="comment">% to hold all datapoint-center distances</span>
+    <span class="keyword">for</span> h=1:k
+       <span class="keyword">for</span> i=1:m
+           dist(h,i) = norm(X(:,i)-centers(:,h));
+       <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    [~,aux] = min(dist);
+    <span class="keyword">for</span> h=1:k
+        C_h = find(aux==h);                          <span class="comment">% the h-th cluster as a set</span>
+        partition_l(:,h) = (aux==h);                 <span class="comment">% the h-th cluster as a 0/1-vector</span>
+        centers(:,h) = sum(X(:,C_h),2)/length(C_h);  <span class="comment">% the h-th center</span>
+   <span class="keyword">end</span>
+<span class="keyword">end</span>
+<span class="comment">% visualize the ouputted clusters</span>
+figure(3)
+<span class="keyword">for</span> h=1:k
+    C_h = find(partition_l(:,h));
+    plot3(X(1,C_h),X(2,C_h),X(3,C_h),<span class="string">'o'</span>);
+    hold <span class="string">on</span>
+<span class="keyword">end</span>
+title(<span class="string">'Clusters produced by Lloyd algorithm'</span>)
+</pre><img vspace="5" hspace="5" src="Chapter07_03.png" style="width:560px;height:420px;" alt=""> <h2>Illustration of spectral clustering<a name="6"></a></h2><h2>generate two communites and their connections with the stochastic block model<a name="7"></a></h2><pre class="codeinput">m = 500;
+perm = randperm(m);
+comm1 = sort(perm(1:m/2));
+comm2 = sort(perm(m/2+1:m));
+<span class="comment">% define an auxiliary 0/1-matrix whose entries = 0 w.proba=p</span>
+p = 1/4;
+aux2 = (rand(m/2,m/2)&lt;p);
+<span class="comment">% define an auxiliary 0/1-matrix whose entries = 1 w.proba=q</span>
+q = 3/4;
+aux1 = (rand(m/2,m/2)&lt;q);
+aux1l = tril(aux1) - diag(diag(aux1));
+aux1u = triu(aux1) - diag(diag(aux1));
+<span class="comment">% define the random adjacency matrix W</span>
+W(comm1,comm1) = aux1l+aux1l';
+W(comm1,comm2) = aux2;
+W(comm2,comm1) = aux2';
+W(comm2,comm2) = aux1u+aux1u';
+</pre><h2>Cluster according to the leading eigenvector of W - delta*ones(n,n)<a name="8"></a></h2><pre class="codeinput">delta=sum(sum(W))/m^2;
+[V,~] = eigs(W-delta*ones(m,m),1);
+comm1_sp = find(V(:,1)&gt;0)';
+comm2_sp = find(V(:,1)&lt;=0)';
+<span class="comment">% determine the percentage of errors made</span>
+n1 = length(intersect(comm1,comm1_sp))+length(intersect(comm2,comm2_sp));
+n2 = length(intersect(comm1,comm2_sp))+length(intersect(comm2,comm1_sp));
+disp(strcat(<span class="string">'Percentage of errors:'</span>, 32, num2str(100*min(n1,n2)/100), 37))
+</pre><pre class="codeoutput">Percentage of errors: 0%
+</pre><h2>There seems to be no errors at all when m is large enough!<a name="9"></a></h2><p>Empirical estimation of the error percentage depending on m, p, and q</p><pre class="codeinput">clear <span class="string">all</span>; clc;
+<span class="comment">% parameters for the range of values of m to be tested</span>
+m_min = 4;
+m_max = 140;
+m_inc = 4;
+<span class="comment">% number of random trials performed for a given m</span>
+nb_trials = 50;
+<span class="comment">% fix one value of q and consider several values of p</span>
+q = 3/4;
+p_values = [1/10, 1/5, 1/4, 1/2];
+<span class="comment">% matrix to store the percentage of errors</span>
+nb_errors = zeros(1+ (m_max-m_min)/m_inc ,length(p_values));
+<span class="comment">% loop reproducing the above code</span>
+<span class="keyword">for</span> j=1:4
+    <span class="keyword">for</span> m = m_min:m_inc:m_max
+        err = 0;
+        <span class="keyword">for</span> t=1:nb_trials
+            perm = randperm(m);
+            comm1 = sort(perm(1:m/2));
+            comm2 = sort(perm(m/2+1:m));
+            aux1 = (rand(m/2,m/2)&lt;q);
+            aux1u = triu(aux1) - diag(diag(aux1));
+            aux1l = tril(aux1) - diag(diag(aux1));
+            aux2 = (rand(m/2,m/2)&lt;p_values(j));
+            W=zeros(m,m);
+            W(comm1,comm1) = aux1l+aux1l';
+            W(comm1,comm2) = aux2;
+            W(comm2,comm1) = aux2';
+            W(comm2,comm2) = aux1u+aux1u';
+            delta = sum(sum(W))/m^2;
+            [V,~] = eigs(W-delta*ones(m,m),1);
+            comm1_sp = find(V(:,1)&gt;0)';
+            comm2_sp = find(V(:,1)&lt;=0)';
+            err = err + min(<span class="keyword">...</span>
+                length(intersect(comm1,comm1_sp))+length(intersect(comm2,comm2_sp)),<span class="keyword">...</span>
+                length(intersect(comm1,comm2_sp))+length(intersect(comm2,comm1_sp)));
+        <span class="keyword">end</span>
+        nb_errors(1+ (m-m_min)/m_inc,j) = err/(nb_trials*m);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+<span class="comment">% visualize the results</span>
+figure(4)
+plot(m_min:m_inc:m_max,100*nb_errors(:,1),<span class="string">'-*'</span>,<span class="keyword">...</span>
+    m_min:m_inc:m_max,100*nb_errors(:,2),<span class="string">'-o'</span>,<span class="keyword">...</span>
+    m_min:m_inc:m_max,100*nb_errors(:,3),<span class="string">'-+'</span>,<span class="keyword">...</span>
+    m_min:m_inc:m_max,100*nb_errors(:,4),<span class="string">'-s'</span>);
+    title(strcat(<span class="string">'q='</span>,num2str(q)));
+    xlabel(<span class="string">'size m of the randon graph'</span>);
+    ylabel(<span class="string">'percentage of vertices put in the wrong community'</span>);
+legend(strcat(<span class="string">'p='</span>,num2str(p_values(1))),<span class="keyword">...</span>
+    strcat(<span class="string">'p='</span>,num2str(p_values(2))),<span class="keyword">...</span>
+    strcat(<span class="string">'p='</span>,num2str(p_values(3))),<span class="keyword">...</span>
+    strcat(<span class="string">'p='</span>,num2str(p_values(4))));
+</pre><img vspace="5" hspace="5" src="Chapter07_04.png" style="width:560px;height:420px;" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Computational illustration for Chapter 07
+%              Clustering
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+clear all; clc;
+
+%% Illustration of single-linkage and Lloyd's algorithm
+
+%% generate clustered data
+k = 5;                            % number of clusters
+M = randi(25,1,k);                % numbers of datapoints per cluster
+m = sum(M);                       % total number of datapoints
+X = [];                           % dxm matrix to hold the datapoints (d=3)
+for h = 1:k
+    center_h = [cos(2*pi/k*h); sin(2*pi/k*h); .05*rand];  
+    radius_h = rand/h;
+    X_h = [center_h(1) + radius_h*randn(1,M(h));...
+           center_h(2) + radius_h*randn(1,M(h));
+           center_h(3) + .05*randn(1,M(h))];
+    X = [X X_h];
+end
+% shuffle the datapoints
+X = X(:,randperm(m));            
+% store all pairwise distances into a matrix
+dist = zeros(m,m);
+for i=1:m
+    for j=1:m
+        dist(i,j) = norm(X(:,i)-X(:,j));
+    end
+end
+% visualize the original clusters
+figure(1)
+plot3(X(1,:),X(2,:),X(3,:),'*k')
+title('Clustered datapoints')
+
+
+%% naive implementation of the single-linkage algorithm
+partition_sl = eye(m);               % its columns will hold the clusters
+for t=0:m-k-1
+    d = inf(m-t);                    % matrix of distances between clusters
+    for i=1:m-t-1
+        C_i = find(partition_sl(:,i));
+        for j=i+1:m-t
+            C_j = find(partition_sl(:,j));
+            aux = min(min(dist(C_i,C_j)));
+            d(i,j) = aux;
+            d(j,i) = aux;
+        end
+    end
+    [~,j] = min(min(d));
+    [~,i] = min(d(:,j));
+    partition_sl(:,i) = partition_sl(:,i)+partition_sl(:,j); % merge C_i, C_j
+    partition_sl(:,j) = [];                                  % remove C_j
+end
+% visualize the ouputted clusters
+figure(2)
+for h=1:k
+    C_h = find(partition_sl(:,h));
+    plot3(X(1,C_h),X(2,C_h),X(3,C_h),'+'); 
+    hold on
+end
+title('Clusters produced by single linkage')
+
+%% naive implementation of Lloyd's algorithm
+centers = [4*rand(2,k)-2; zeros(1,k)];   % dxk matrix to holds the centers (d=3)
+partition_l = zeros(m,k);                % its columns will hold the clusters
+n_iters = 100;                           % number of iterations
+for t=1:n_iters
+    dist = zeros(k,m);                   % to hold all datapoint-center distances
+    for h=1:k
+       for i=1:m
+           dist(h,i) = norm(X(:,i)-centers(:,h));
+       end 
+    end
+    [~,aux] = min(dist);
+    for h=1:k
+        C_h = find(aux==h);                          % the h-th cluster as a set
+        partition_l(:,h) = (aux==h);                 % the h-th cluster as a 0/1-vector
+        centers(:,h) = sum(X(:,C_h),2)/length(C_h);  % the h-th center
+   end
+end
+% visualize the ouputted clusters
+figure(3)
+for h=1:k
+    C_h = find(partition_l(:,h));
+    plot3(X(1,C_h),X(2,C_h),X(3,C_h),'o'); 
+    hold on
+end
+title('Clusters produced by Lloyd algorithm')
+
+
+%% Illustration of spectral clustering
+
+%% generate two communites and their connections with the stochastic block model
+
+m = 500; 
+perm = randperm(m);
+comm1 = sort(perm(1:m/2));
+comm2 = sort(perm(m/2+1:m));
+% define an auxiliary 0/1-matrix whose entries = 0 w.proba=p
+p = 1/4;
+aux2 = (rand(m/2,m/2)<p);
+% define an auxiliary 0/1-matrix whose entries = 1 w.proba=q
+q = 3/4;
+aux1 = (rand(m/2,m/2)<q);   
+aux1l = tril(aux1) - diag(diag(aux1));
+aux1u = triu(aux1) - diag(diag(aux1));
+% define the random adjacency matrix W
+W(comm1,comm1) = aux1l+aux1l';
+W(comm1,comm2) = aux2;
+W(comm2,comm1) = aux2';
+W(comm2,comm2) = aux1u+aux1u';
+
+%% Cluster according to the leading eigenvector of W - delta*ones(n,n)
+delta=sum(sum(W))/m^2;
+[V,~] = eigs(W-delta*ones(m,m),1);
+comm1_sp = find(V(:,1)>0)';
+comm2_sp = find(V(:,1)<=0)';
+% determine the percentage of errors made
+n1 = length(intersect(comm1,comm1_sp))+length(intersect(comm2,comm2_sp));
+n2 = length(intersect(comm1,comm2_sp))+length(intersect(comm2,comm1_sp));
+disp(strcat('Percentage of errors:', 32, num2str(100*min(n1,n2)/100), 37))
+           
+%% There seems to be no errors at all when m is large enough!
+% Empirical estimation of the error percentage depending on m, p, and q
+
+clear all; clc;
+% parameters for the range of values of m to be tested
+m_min = 4;
+m_max = 140;
+m_inc = 4;
+% number of random trials performed for a given m
+nb_trials = 50;
+% fix one value of q and consider several values of p
+q = 3/4;
+p_values = [1/10, 1/5, 1/4, 1/2];
+% matrix to store the percentage of errors
+nb_errors = zeros(1+ (m_max-m_min)/m_inc ,length(p_values));
+% loop reproducing the above code
+for j=1:4
+    for m = m_min:m_inc:m_max
+        err = 0;
+        for t=1:nb_trials            
+            perm = randperm(m);
+            comm1 = sort(perm(1:m/2));
+            comm2 = sort(perm(m/2+1:m));
+            aux1 = (rand(m/2,m/2)<q);
+            aux1u = triu(aux1) - diag(diag(aux1));
+            aux1l = tril(aux1) - diag(diag(aux1));
+            aux2 = (rand(m/2,m/2)<p_values(j));
+            W=zeros(m,m);
+            W(comm1,comm1) = aux1l+aux1l';
+            W(comm1,comm2) = aux2;
+            W(comm2,comm1) = aux2';
+            W(comm2,comm2) = aux1u+aux1u';
+            delta = sum(sum(W))/m^2;
+            [V,~] = eigs(W-delta*ones(m,m),1);
+            comm1_sp = find(V(:,1)>0)';
+            comm2_sp = find(V(:,1)<=0)';
+            err = err + min(...
+                length(intersect(comm1,comm1_sp))+length(intersect(comm2,comm2_sp)),...
+                length(intersect(comm1,comm2_sp))+length(intersect(comm2,comm1_sp)));
+        end
+        nb_errors(1+ (m-m_min)/m_inc,j) = err/(nb_trials*m);
+    end
+end
+% visualize the results
+figure(4)
+plot(m_min:m_inc:m_max,100*nb_errors(:,1),'-*',...
+    m_min:m_inc:m_max,100*nb_errors(:,2),'-o',...
+    m_min:m_inc:m_max,100*nb_errors(:,3),'-+',...
+    m_min:m_inc:m_max,100*nb_errors(:,4),'-s');
+    title(strcat('q=',num2str(q)));
+    xlabel('size m of the randon graph');
+    ylabel('percentage of vertices put in the wrong community');
+legend(strcat('p=',num2str(p_values(1))),...
+    strcat('p=',num2str(p_values(2))),...
+    strcat('p=',num2str(p_values(3))),...
+    strcat('p=',num2str(p_values(4))));
+##### SOURCE END #####
+--></body></html>
