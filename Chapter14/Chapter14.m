@@ -68,14 +68,14 @@ sprintf(strcat('Recovery performed in', 32, num2str(t1),...
 % finally, by the second linear program (slack vectors z^+ and z^-) 
 tic;
 cvx_begin quiet
-variable zp(N) nonnegative
-variable zm(N) nonnegative
-minimize sum(zp+zm)
+variable z_p(N) nonnegative
+variable z_m(N) nonnegative
+minimize sum(z_p+z_m)
 subject to
-A*(zp-zm) == y;
+A*(z_p-z_m) == y;
 cvx_end
 t2 = toc;
-x2 = zp-zm;
+x2 = z_p-z_m;
 rel_error2 = num2str(norm(x-x2)/norm(x));
 sprintf(strcat('Recovery performed in', 32, num2str(t2),...
     'sec with a relative L2-error of', 32, rel_error2,...
