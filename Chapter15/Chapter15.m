@@ -5,7 +5,7 @@
 clear all; clc;
 % CVX is needed to run the second part of this file
 
-%% generate a 2s-sparse vector and its first 2s Fourier observations
+%% generate an s-sparse vector and its first 2s Fourier observations
 % select problem sizes
 N = 500; 
 s = 10;
