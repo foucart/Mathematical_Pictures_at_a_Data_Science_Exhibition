@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Chapter14</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-10-07"><meta name="DC.source" content="Chapter14.m"><style type="text/css">
+      --><title>Chapter14</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-10-12"><meta name="DC.source" content="Chapter14.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -96,7 +96,7 @@ sprintf(strcat(<span class="string">'Recovery considered to be exact, with a rel
 </pre><pre class="codeoutput">
 ans =
 
-Recovery considered to be exact, with a relative L2-error of 1.9003e-12
+Recovery considered to be exact, with a relative L2-error of 4.2536e-13
 
 </pre><h2>Comparison of L1-miminizations performed in three different ways:<a name="5"></a></h2><p>first, by straight L1-mimimization (same as above)</p><pre class="codeinput">tic;
 cvx_begin <span class="string">quiet</span>
@@ -129,14 +129,14 @@ sprintf(strcat(<span class="string">'Recovery performed in'</span>, 32, num2str(
 <span class="comment">% finally, by the second linear program (slack vectors z^+ and z^-)</span>
 tic;
 cvx_begin <span class="string">quiet</span>
-variable <span class="string">zp(N)</span> <span class="string">nonnegative</span>
-variable <span class="string">zm(N)</span> <span class="string">nonnegative</span>
-minimize <span class="string">sum(zp+zm)</span>
+variable <span class="string">z_p(N)</span> <span class="string">nonnegative</span>
+variable <span class="string">z_m(N)</span> <span class="string">nonnegative</span>
+minimize <span class="string">sum(z_p+z_m)</span>
 subject <span class="string">to</span>
-A*(zp-zm) == y;
+A*(z_p-z_m) == y;
 cvx_end
 t2 = toc;
-x2 = zp-zm;
+x2 = z_p-z_m;
 rel_error2 = num2str(norm(x-x2)/norm(x));
 sprintf(strcat(<span class="string">'Recovery performed in'</span>, 32, num2str(t2),<span class="keyword">...</span>
     <span class="string">'sec with a relative L2-error of'</span>, 32, rel_error2,<span class="keyword">...</span>
@@ -144,17 +144,17 @@ sprintf(strcat(<span class="string">'Recovery performed in'</span>, 32, num2str(
 </pre><pre class="codeoutput">
 ans =
 
-Recovery performed in 0.22979sec with a relative L2-error of 1.9003e-12 by straight L1-minimization
+Recovery performed in 0.24963sec with a relative L2-error of 4.2536e-13 by straight L1-minimization
 
 
 ans =
 
-Recovery performed in 0.40089sec with a relative L2-error of 5.3009e-15 by the first linear program
+Recovery performed in 0.40572sec with a relative L2-error of 2.058e-15 by the first linear program
 
 
 ans =
 
-Recovery performed in 0.38477sec with a relative L2-error of 2.7817e-15 by the second linear program
+Recovery performed in 0.3616sec with a relative L2-error of 4.008e-15 by the second linear program
 
 </pre><h2>explore the influence of the number of measurements<a name="6"></a></h2><pre class="codeinput">N = 500;
 s = 20;
@@ -256,14 +256,14 @@ sprintf(strcat('Recovery performed in', 32, num2str(t1),...
 % finally, by the second linear program (slack vectors z^+ and z^-) 
 tic;
 cvx_begin quiet
-variable zp(N) nonnegative
-variable zm(N) nonnegative
-minimize sum(zp+zm)
+variable z_p(N) nonnegative
+variable z_m(N) nonnegative
+minimize sum(z_p+z_m)
 subject to
-A*(zp-zm) == y;
+A*(z_p-z_m) == y;
 cvx_end
 t2 = toc;
-x2 = zp-zm;
+x2 = z_p-z_m;
 rel_error2 = num2str(norm(x-x2)/norm(x));
 sprintf(strcat('Recovery performed in', 32, num2str(t2),...
     'sec with a relative L2-error of', 32, rel_error2,...
