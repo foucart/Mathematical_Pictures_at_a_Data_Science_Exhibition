@@ -1,1 +1,341 @@
 
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Chapter17</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-10-29"><meta name="DC.source" content="Chapter17.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">generate a sparse vector and its one-bit observation vector</a></li><li><a href="#3">verify that the direction of x is well approximated by the outputs</a></li><li><a href="#4">Behavior of the recovery error as a function of the ratio m/(s*log(N/s))</a></li><li><a href="#5">verify that the magnitude can be well approximated, too,</a></li></ul></div><pre class="codeinput"><span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="comment">%   Computational illustration for Chapter 17</span>
+<span class="comment">%   Sparse Recovery from One-Bit Observations</span>
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+clear <span class="string">all</span>; clc;
+<span class="comment">% CVX is needed to run this file</span>
+<span class="comment">% comment out the next line if MOSEK is not installed</span>
+cvx_solver <span class="string">mosek</span>
+</pre><h2>generate a sparse vector and its one-bit observation vector<a name="2"></a></h2><p>select problem sizes</p><pre class="codeinput">N = 200;
+s = 8;
+m = 20000;
+<span class="comment">% create the sparse vector x to be recovered</span>
+x = zeros(N,1);
+supp = sort(randperm(N,s));
+x(supp) = randn(s,1);
+<span class="comment">% produce the observation vector y</span>
+A = sqrt(pi/2)/m*randn(m,N);
+y = sign(A*x);
+</pre><h2>verify that the direction of x is well approximated by the outputs<a name="3"></a></h2><p>of the hard thresholding and linear programming procedures</p><pre class="codeinput">tic;
+x_ht = zeros(N,1);
+aux = A'*y;
+[~,idx] = sort(abs(aux),<span class="string">'descend'</span>);
+x_ht(idx(1:s)) = aux(idx(1:s));
+t_ht = toc;
+error_ht = norm(x/norm(x) - x_ht);
+sprintf(strcat(<span class="string">'Hard thrsholding took'</span>, 32, num2str(t_ht),<span class="keyword">...</span>
+    <span class="string">'sec to approximate the direction with L2-error of'</span>, 32, num2str(error_ht)))
+<span class="comment">%</span>
+tic;
+cvx_begin <span class="string">quiet</span>
+variable <span class="string">x_lp(N)</span>
+variable <span class="string">c(N)</span>
+minimize <span class="string">sum(c)</span>
+subject <span class="string">to</span>
+sum(y.*(A*x_lp)) == 1;
+y.*(A*x_lp) &gt;= 0;
+c + x_lp &gt;= 0;
+c - x_lp &gt;= 0;
+cvx_end
+t_lp = toc;
+error_lp = norm(x/norm(x) - x_lp);
+sprintf(strcat(<span class="string">'Linear programming took'</span>, 32, num2str(t_lp),<span class="keyword">...</span>
+    <span class="string">'sec to approximate the direction with L2-error of'</span>, 32, num2str(error_lp)))
+</pre><pre class="codeoutput">
+ans =
+
+Hard thrsholding took 0.0022705sec to approximate the direction with L2-error of 0.050133
+
+
+ans =
+
+Linear programming took 5.4127sec to approximate the direction with L2-error of 0.0064176
+
+</pre><h2>Behavior of the recovery error as a function of the ratio m/(s*log(N/s))<a name="4"></a></h2><p>for hard thresholding only (linear programming would take too long) expected behavior: log(error) = c * log(ratio), with c=-1/2</p><pre class="codeinput">N = 200;
+s = 8;
+n_tests = 100;
+m_min = 10000;
+m_max = 30000;
+m_inc = 1000;
+ratio = zeros(1,(m_max-m_min)/m_inc+1);
+error_ht = zeros(n_tests,(m_max-m_min)/m_inc+1);
+<span class="keyword">for</span> t = 1:n_tests
+    x = zeros(N,1);
+    supp = sort(randperm(N,s));
+    x(supp) = randn(s,1);
+    x = x/norm(x);
+    <span class="keyword">for</span> m = m_min:m_inc:m_max
+        A = sqrt(pi/2)/m*randn(m,N);
+        y = sign(A*x);
+        x_ht = zeros(N,1);
+        aux = A'*y;
+        [~,idx] = sort(abs(aux),<span class="string">'descend'</span>);
+        x_ht(idx(1:s)) = aux(idx(1:s));
+        ratio((m-m_min)/m_inc+1) = log(m/s/log(N/s));
+        error_ht(t,(m-m_min)/m_inc+1) = norm(x-x_ht);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+<span class="comment">% visualize the result</span>
+aux = polyfit(ratio,log(mean(error_ht)),1);
+slope_ht = aux(1);
+figure(1)
+plot(ratio,log(mean(error_ht)))
+xlabel(<span class="string">'ratio m/(s log(N/s))'</span>)
+ylabel(<span class="string">'direction recovery error'</span>)
+legend(strcat(<span class="string">'hard thresholding (slope='</span>,num2str(slope_ht),<span class="string">')'</span>))
+title(strcat(<span class="string">'N='</span>,num2str(N), 32, <span class="string">'s='</span>,num2str(s)))
+</pre><img vspace="5" hspace="5" src="Chapter17_01.png" style="width:560px;height:420px;" alt=""> <h2>verify that the magnitude can be well approximated, too,<a name="5"></a></h2><p>provided some thresholds are allowed in the binary observations</p><pre class="codeinput">N = 200;
+s = 8;
+x = zeros(N,1);
+supp = sort(randperm(N,s));
+x(supp) = randn(s,1);
+x = rand*x/norm(x);
+<span class="comment">%</span>
+m = 20000;
+A = sqrt(pi/2)/m*randn(m,N);
+theta = sqrt(pi/2)/m*randn(m,1);
+y = sign(A*x-theta);
+A_tilde = [A -theta];
+<span class="comment">%</span>
+tic;
+x_tilde_ht = zeros(N+1,1);
+aux = A_tilde'*y;
+[~,idx] = sort(abs(aux),<span class="string">'descend'</span>);
+x_tilde_ht(idx(1:s+1)) = aux(idx(1:s+1));
+x_ht = x_tilde_ht(1:N)/x_tilde_ht(N+1);
+t_ht = toc;
+rel_error_ht = norm(x - x_ht)/norm(x);
+sprintf(strcat(<span class="string">'Hard thrsholding took'</span>, 32, num2str(t_ht),<span class="keyword">...</span>
+    <span class="string">'sec to fully approximate with a relative L2-error of'</span>, 32, num2str(rel_error_ht)))
+<span class="comment">%</span>
+tic;
+cvx_begin <span class="string">quiet</span>
+variable <span class="string">x_tilde_lp(N+1)</span>
+variable <span class="string">c(N+1)</span>
+minimize <span class="string">sum(c)</span>
+subject <span class="string">to</span>
+sum(y.*(A_tilde*x_tilde_lp)) == 1;
+y.*(A_tilde*x_tilde_lp) &gt;= 0;
+c + x_tilde_lp &gt;= 0;
+c - x_tilde_lp &gt;= 0;
+cvx_end
+x_lp = x_tilde_lp(1:N)/x_tilde_lp(N+1);
+t_lp = toc;
+rel_error_lp = norm(x - x_lp)/norm(x);
+sprintf(strcat(<span class="string">'Linear programming took'</span>, 32, num2str(t_lp),<span class="keyword">...</span>
+    <span class="string">'sec to fully approximate with a relative L2-error of'</span>, 32, num2str(rel_error_lp)))
+</pre><pre class="codeoutput">
+ans =
+
+Hard thrsholding took 0.0028615sec to fully approximate with a relative L2-error of 0.12901
+
+
+ans =
+
+Linear programming took 4.9841sec to fully approximate with a relative L2-error of 0.0059859
+
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   Computational illustration for Chapter 17
+%   Sparse Recovery from One-Bit Observations   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+clear all; clc;
+% CVX is needed to run this file
+% comment out the next line if MOSEK is not installed
+cvx_solver mosek 
+
+%% generate a sparse vector and its one-bit observation vector
+% select problem sizes
+N = 200;  
+s = 8;
+m = 20000;
+% create the sparse vector x to be recovered
+x = zeros(N,1);
+supp = sort(randperm(N,s)); 
+x(supp) = randn(s,1);
+% produce the observation vector y 
+A = sqrt(pi/2)/m*randn(m,N); 
+y = sign(A*x);
+
+%% verify that the direction of x is well approximated by the outputs
+% of the hard thresholding and linear programming procedures
+tic;
+x_ht = zeros(N,1);
+aux = A'*y;
+[~,idx] = sort(abs(aux),'descend');
+x_ht(idx(1:s)) = aux(idx(1:s));
+t_ht = toc;
+error_ht = norm(x/norm(x) - x_ht);
+sprintf(strcat('Hard thrsholding took', 32, num2str(t_ht),...
+    'sec to approximate the direction with L2-error of', 32, num2str(error_ht)))
+%
+tic;
+cvx_begin quiet
+variable x_lp(N)
+variable c(N)
+minimize sum(c)
+subject to
+sum(y.*(A*x_lp)) == 1;
+y.*(A*x_lp) >= 0;
+c + x_lp >= 0;
+c - x_lp >= 0;
+cvx_end
+t_lp = toc;
+error_lp = norm(x/norm(x) - x_lp);
+sprintf(strcat('Linear programming took', 32, num2str(t_lp),...
+    'sec to approximate the direction with L2-error of', 32, num2str(error_lp)))
+
+
+%% Behavior of the recovery error as a function of the ratio m/(s*log(N/s))
+% for hard thresholding only (linear programming would take too long)
+% expected behavior: log(error) = c * log(ratio), with c=-1/2
+
+N = 200;  
+s = 8;
+n_tests = 100;
+m_min = 10000;
+m_max = 30000;
+m_inc = 1000;
+ratio = zeros(1,(m_max-m_min)/m_inc+1);
+error_ht = zeros(n_tests,(m_max-m_min)/m_inc+1);
+for t = 1:n_tests
+    x = zeros(N,1);
+    supp = sort(randperm(N,s)); 
+    x(supp) = randn(s,1);
+    x = x/norm(x);
+    for m = m_min:m_inc:m_max
+        A = sqrt(pi/2)/m*randn(m,N); 
+        y = sign(A*x);
+        x_ht = zeros(N,1);
+        aux = A'*y;
+        [~,idx] = sort(abs(aux),'descend');
+        x_ht(idx(1:s)) = aux(idx(1:s));
+        ratio((m-m_min)/m_inc+1) = log(m/s/log(N/s));
+        error_ht(t,(m-m_min)/m_inc+1) = norm(x-x_ht);
+    end
+end
+% visualize the result
+aux = polyfit(ratio,log(mean(error_ht)),1);
+slope_ht = aux(1);
+figure(1)
+plot(ratio,log(mean(error_ht)))
+xlabel('ratio m/(s log(N/s))')
+ylabel('direction recovery error')
+legend(strcat('hard thresholding (slope=',num2str(slope_ht),')'))
+title(strcat('N=',num2str(N), 32, 's=',num2str(s)))
+
+%% verify that the magnitude can be well approximated, too,
+% provided some thresholds are allowed in the binary observations 
+
+N = 200;  
+s = 8;
+x = zeros(N,1);
+supp = sort(randperm(N,s)); 
+x(supp) = randn(s,1);
+x = rand*x/norm(x);
+%
+m = 20000;
+A = sqrt(pi/2)/m*randn(m,N); 
+theta = sqrt(pi/2)/m*randn(m,1);
+y = sign(A*x-theta);
+A_tilde = [A -theta];
+%
+tic;
+x_tilde_ht = zeros(N+1,1);
+aux = A_tilde'*y;
+[~,idx] = sort(abs(aux),'descend');
+x_tilde_ht(idx(1:s+1)) = aux(idx(1:s+1));
+x_ht = x_tilde_ht(1:N)/x_tilde_ht(N+1);
+t_ht = toc;
+rel_error_ht = norm(x - x_ht)/norm(x);
+sprintf(strcat('Hard thrsholding took', 32, num2str(t_ht),...
+    'sec to fully approximate with a relative L2-error of', 32, num2str(rel_error_ht)))
+%
+tic;
+cvx_begin quiet
+variable x_tilde_lp(N+1)
+variable c(N+1)
+minimize sum(c)
+subject to
+sum(y.*(A_tilde*x_tilde_lp)) == 1;
+y.*(A_tilde*x_tilde_lp) >= 0;
+c + x_tilde_lp >= 0;
+c - x_tilde_lp >= 0;
+cvx_end
+x_lp = x_tilde_lp(1:N)/x_tilde_lp(N+1);
+t_lp = toc;
+rel_error_lp = norm(x - x_lp)/norm(x);
+sprintf(strcat('Linear programming took', 32, num2str(t_lp),...
+    'sec to fully approximate with a relative L2-error of', 32, num2str(rel_error_lp)))
+
+##### SOURCE END #####
+--></body></html>
