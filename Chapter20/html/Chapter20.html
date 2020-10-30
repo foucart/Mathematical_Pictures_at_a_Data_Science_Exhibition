@@ -1,1 +1,425 @@
 
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Chapter20</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-10-30"><meta name="DC.source" content="Chapter20.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Inscribed circle to the d-simplex</a></li><li><a href="#3">Guessing the value of the inscribed radius as a function of d (when p=2)</a></li><li><a href="#4">Guessing the value of the inscribed radius as a function of d (when p=Inf)</a></li><li><a href="#5">Guessing the value of the inscribed radius as a function of d (when p=1)</a></li><li><a href="#6">Guessing the value of the inscribed radius as a function of d and p</a></li><li><a href="#7">Determination of the proximity (wrto the L_inf-norm)</a></li><li><a href="#8">Determination of the Hausdorff distance (wrto to the L_1-norm)</a></li></ul></div><pre class="codeinput"><span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="comment">%   Computational illustration for Chapter 20</span>
+<span class="comment">%        Snippets of Linear Programming</span>
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+clear <span class="string">all</span>; clc;
+<span class="comment">% CVX is needed to run this file</span>
+</pre><h2>Inscribed circle to the d-simplex<a name="2"></a></h2><pre class="codeinput"><span class="comment">% first, the euclidean plane: the answer be 1/(2+sqrt(2))=0.2929</span>
+d = 2;                            <span class="comment">% ambient dimension</span>
+p = 2;                            <span class="comment">% index of the \ell_p-norm</span>
+q = p/(p-1);                      <span class="comment">% dual index</span>
+A = [ones(1,d); -eye(d)];
+b = [1; zeros(d,1)];
+row_norms = zeros(d+1,1);
+<span class="keyword">for</span> i = 1:d+1
+    row_norms(i) = norm(A(i,:),q);
+<span class="keyword">end</span>
+cvx_begin <span class="string">quiet</span>
+variable <span class="string">center(d)</span>
+variable <span class="string">radius</span>
+maximize <span class="string">radius</span>
+subject <span class="string">to</span>
+A*center + radius*row_norms &lt;= b
+cvx_end
+sprintf(strcat(<span class="string">'In the euclidean plane, the inscribed radius is'</span>, <span class="keyword">...</span>
+    32, num2str(radius)))
+</pre><pre class="codeoutput">
+ans =
+
+In the euclidean plane, the inscribed radius is 0.29289
+
+</pre><h2>Guessing the value of the inscribed radius as a function of d (when p=2)<a name="3"></a></h2><pre class="codeinput">d_max = 10;
+p = 2; q = 2;
+radius = zeros(1,d_max);
+<span class="keyword">for</span> d=1:d_max
+    A = [ones(1,d); -eye(d)];
+    b = [1; zeros(d,1)];
+    row_norms = zeros(d+1,1);
+    <span class="keyword">for</span> i = 1:d+1
+        row_norms(i) = norm(A(i,:),q);
+    <span class="keyword">end</span>
+    cvx_begin <span class="string">quiet</span>
+    variable <span class="string">c(d)</span>
+    variable <span class="string">r</span>
+    maximize <span class="string">r</span>
+    subject <span class="string">to</span>
+    A*c + r*row_norms &lt;= b
+    cvx_end
+    radius(d) = r;
+<span class="keyword">end</span>
+fprintf(strcat(<span class="string">'For d form 1 to'</span>, 32, num2str(d_max), <span class="keyword">...</span>
+    <span class="string">', the values of the inscribed radii with p='</span>, num2str(p), <span class="string">' are'</span>))
+radius
+</pre><pre class="codeoutput">For d form 1 to 10, the values of the inscribed radii with p=2 are
+radius =
+
+  Columns 1 through 7
+
+    0.5000    0.2929    0.2113    0.1667    0.1382    0.1184    0.1037
+
+  Columns 8 through 10
+
+    0.0923    0.0833    0.0760
+
+</pre><h2>Guessing the value of the inscribed radius as a function of d (when p=Inf)<a name="4"></a></h2><pre class="codeinput">d_max = 10;
+p = inf; q = 1;
+radius = zeros(1,d_max);
+<span class="keyword">for</span> d=1:d_max
+    A = [ones(1,d); -eye(d)];
+    b = [1; zeros(d,1)];
+    row_norms = zeros(d+1,1);
+    <span class="keyword">for</span> i = 1:d+1
+        row_norms(i) = norm(A(i,:),q);
+    <span class="keyword">end</span>
+    cvx_begin <span class="string">quiet</span>
+    variable <span class="string">c(d)</span>
+    variable <span class="string">r</span>
+    maximize <span class="string">r</span>
+    subject <span class="string">to</span>
+    A*c + r*row_norms &lt;= b
+    cvx_end
+    radius(d) = r;
+<span class="keyword">end</span>
+fprintf(strcat(<span class="string">'For d form 1 to'</span>, 32, num2str(d_max), <span class="keyword">...</span>
+    <span class="string">', the values of the inscribed radii with p='</span>, num2str(p), <span class="string">' are'</span>))
+radius
+</pre><pre class="codeoutput">For d form 1 to 10, the values of the inscribed radii with p=Inf are
+radius =
+
+  Columns 1 through 7
+
+    0.5000    0.2500    0.1667    0.1250    0.1000    0.0833    0.0714
+
+  Columns 8 through 10
+
+    0.0625    0.0556    0.0500
+
+</pre><h2>Guessing the value of the inscribed radius as a function of d (when p=1)<a name="5"></a></h2><pre class="codeinput">d_max = 10;
+p = 1; q = inf;
+radius = zeros(1,d_max);
+<span class="keyword">for</span> d=1:d_max
+    A = [ones(1,d); -eye(d)];
+    b = [1; zeros(d,1)];
+    row_norms = zeros(d+1,1);
+    <span class="keyword">for</span> i = 1:d+1
+        row_norms(i) = norm(A(i,:),q);
+    <span class="keyword">end</span>
+    cvx_begin <span class="string">quiet</span>
+    variable <span class="string">c(d)</span>
+    variable <span class="string">r</span>
+    maximize <span class="string">r</span>
+    subject <span class="string">to</span>
+    A*c + r*row_norms &lt;= b
+    cvx_end
+    radius(d) = r;
+<span class="keyword">end</span>
+fprintf(strcat(<span class="string">'For d form 1 to'</span>, 32, num2str(d_max), <span class="keyword">...</span>
+    <span class="string">', the values of the inscribed radii with p='</span>, num2str(p), <span class="string">' are'</span>))
+radius
+</pre><pre class="codeoutput">For d form 1 to 10, the values of the inscribed radii with p=1 are
+radius =
+
+  Columns 1 through 7
+
+    0.5000    0.3333    0.2500    0.2000    0.1667    0.1429    0.1250
+
+  Columns 8 through 10
+
+    0.1111    0.1000    0.0909
+
+</pre><h2>Guessing the value of the inscribed radius as a function of d and p<a name="6"></a></h2><p>the answer seems to be: 1/[d^{1-1/p}*(d^{1/p}+1)] = 1/[d+d^{1/q}]</p><h2>Determination of the proximity (wrto the L_inf-norm)<a name="7"></a></h2><p>between the d-simplex and a rotated and shifted version of it</p><pre class="codeinput">d = 16;
+A = [ones(1,d); -eye(d)];
+b = [1; zeros(d,1)];
+Q = hadamard(d)/sqrt(d);
+AA = A*Q';
+bb = b + A*Q'*ones(d,1);
+cvx_begin <span class="string">quiet</span>
+variable <span class="string">x(d)</span>
+variable <span class="string">xx(d)</span>
+variable <span class="string">c</span>
+minimize <span class="string">c</span>
+subject <span class="string">to</span>
+A*x &lt;= b;
+AA*xx &lt;= bb;
+x-xx &lt;= c;
+xx-x &lt;= c;
+cvx_end
+prox = c
+</pre><pre class="codeoutput">
+prox =
+
+    0.9375
+
+</pre><h2>Determination of the Hausdorff distance (wrto to the L_1-norm)<a name="8"></a></h2><p>between the d-simplex and a rotated and shifted version of it</p><pre class="codeinput">d = 16;
+A = [ones(1,d); -eye(d)];
+b = [1; zeros(d,1)];
+V = [zeros(d,1), eye(d)];    <span class="comment">%columns of V = vertices of the d-simplex</span>
+Q = hadamard(d)/sqrt(d);
+AA = A*Q';
+bb = b + A*Q'*ones(d,1);
+VV = Q*V + ones(d,d+1);      <span class="comment">%columns of VV = vertices of other simplex</span>
+left_term = zeros(1,d+1);
+right_term = zeros(1,d+1);
+<span class="keyword">for</span> k=1:d+1
+   cvx_begin <span class="string">quiet</span>
+   variable <span class="string">xx(d)</span>
+   variable <span class="string">c(d)</span>
+   minimize <span class="string">sum(c)</span>
+   subject <span class="string">to</span>
+   AA*xx &lt;= bb;
+   V(:,k)-xx &lt;= c;
+   xx-V(:,k) &lt;= c;
+   cvx_end
+   left_term(k) = cvx_optval;
+   cvx_begin <span class="string">quiet</span>
+   variable <span class="string">x(d)</span>
+   variable <span class="string">c(d)</span>
+   minimize <span class="string">sum(c)</span>
+   subject <span class="string">to</span>
+   A*x &lt;= b;
+   VV(:,k)-x &lt;= c;
+   x-VV(:,k) &lt;= c;
+   cvx_end
+   right_term(k) = cvx_optval;
+<span class="keyword">end</span>
+Haus_dist = max(max(left_term),max(right_term))
+</pre><pre class="codeoutput">
+Haus_dist =
+
+   19.0000
+
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   Computational illustration for Chapter 20
+%        Snippets of Linear Programming     
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+clear all; clc;
+% CVX is needed to run this file 
+
+
+%% Inscribed circle to the d-simplex
+
+% first, the euclidean plane: the answer be 1/(2+sqrt(2))=0.2929
+d = 2;                            % ambient dimension
+p = 2;                            % index of the \ell_p-norm
+q = p/(p-1);                      % dual index
+A = [ones(1,d); -eye(d)];
+b = [1; zeros(d,1)];
+row_norms = zeros(d+1,1);
+for i = 1:d+1
+    row_norms(i) = norm(A(i,:),q);
+end
+cvx_begin quiet
+variable center(d)
+variable radius
+maximize radius
+subject to
+A*center + radius*row_norms <= b
+cvx_end
+sprintf(strcat('In the euclidean plane, the inscribed radius is', ...
+    32, num2str(radius)))
+
+%% Guessing the value of the inscribed radius as a function of d (when p=2)
+d_max = 10;
+p = 2; q = 2;
+radius = zeros(1,d_max);
+for d=1:d_max
+    A = [ones(1,d); -eye(d)];
+    b = [1; zeros(d,1)];
+    row_norms = zeros(d+1,1);
+    for i = 1:d+1
+        row_norms(i) = norm(A(i,:),q);
+    end
+    cvx_begin quiet
+    variable c(d)
+    variable r
+    maximize r
+    subject to
+    A*c + r*row_norms <= b
+    cvx_end
+    radius(d) = r;
+end
+fprintf(strcat('For d form 1 to', 32, num2str(d_max), ...
+    ', the values of the inscribed radii with p=', num2str(p), ' are'))
+radius
+
+%% Guessing the value of the inscribed radius as a function of d (when p=Inf)
+d_max = 10;
+p = inf; q = 1;
+radius = zeros(1,d_max);
+for d=1:d_max
+    A = [ones(1,d); -eye(d)];
+    b = [1; zeros(d,1)];
+    row_norms = zeros(d+1,1);
+    for i = 1:d+1
+        row_norms(i) = norm(A(i,:),q);
+    end
+    cvx_begin quiet
+    variable c(d)
+    variable r
+    maximize r
+    subject to
+    A*c + r*row_norms <= b
+    cvx_end
+    radius(d) = r;
+end
+fprintf(strcat('For d form 1 to', 32, num2str(d_max), ...
+    ', the values of the inscribed radii with p=', num2str(p), ' are'))
+radius
+
+%% Guessing the value of the inscribed radius as a function of d (when p=1)
+d_max = 10;
+p = 1; q = inf;
+radius = zeros(1,d_max);
+for d=1:d_max
+    A = [ones(1,d); -eye(d)];
+    b = [1; zeros(d,1)];
+    row_norms = zeros(d+1,1);
+    for i = 1:d+1
+        row_norms(i) = norm(A(i,:),q);
+    end
+    cvx_begin quiet
+    variable c(d)
+    variable r
+    maximize r
+    subject to
+    A*c + r*row_norms <= b
+    cvx_end
+    radius(d) = r;
+end
+fprintf(strcat('For d form 1 to', 32, num2str(d_max), ...
+    ', the values of the inscribed radii with p=', num2str(p), ' are'))
+radius
+
+%% Guessing the value of the inscribed radius as a function of d and p
+% the answer seems to be: 1/[d^{1-1/p}*(d^{1/p}+1)] = 1/[d+d^{1/q}] 
+
+%% Determination of the proximity (wrto the L_inf-norm)
+% between the d-simplex and a rotated and shifted version of it
+
+d = 16;
+A = [ones(1,d); -eye(d)];
+b = [1; zeros(d,1)];
+Q = hadamard(d)/sqrt(d);
+AA = A*Q';
+bb = b + A*Q'*ones(d,1);
+cvx_begin quiet
+variable x(d)
+variable xx(d)
+variable c
+minimize c
+subject to
+A*x <= b;
+AA*xx <= bb;
+x-xx <= c;
+xx-x <= c; 
+cvx_end
+prox = c
+
+%% Determination of the Hausdorff distance (wrto to the L_1-norm)
+% between the d-simplex and a rotated and shifted version of it
+
+d = 16;
+A = [ones(1,d); -eye(d)];
+b = [1; zeros(d,1)];
+V = [zeros(d,1), eye(d)];    %columns of V = vertices of the d-simplex
+Q = hadamard(d)/sqrt(d);
+AA = A*Q';
+bb = b + A*Q'*ones(d,1);
+VV = Q*V + ones(d,d+1);      %columns of VV = vertices of other simplex
+left_term = zeros(1,d+1);
+right_term = zeros(1,d+1);
+for k=1:d+1
+   cvx_begin quiet
+   variable xx(d)
+   variable c(d)
+   minimize sum(c)
+   subject to
+   AA*xx <= bb;
+   V(:,k)-xx <= c;
+   xx-V(:,k) <= c;
+   cvx_end
+   left_term(k) = cvx_optval;
+   cvx_begin quiet
+   variable x(d)
+   variable c(d)
+   minimize sum(c)
+   subject to
+   A*x <= b;
+   VV(:,k)-x <= c;
+   x-VV(:,k) <= c;
+   cvx_end
+   right_term(k) = cvx_optval;
+end
+Haus_dist = max(max(left_term),max(right_term))
+##### SOURCE END #####
+--></body></html>
