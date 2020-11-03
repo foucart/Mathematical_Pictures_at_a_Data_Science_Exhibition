@@ -1,1 +1,359 @@
 
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Chapter22</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-11-03"><meta name="DC.source" content="Chapter22.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">generate the data</a></li><li><a href="#3">The "spline algorithm" with p=2</a></li><li><a href="#4">an aside: verification of the closed-form formula</a></li><li><a href="#5">The "spline algorithm" with p=inf</a></li><li><a href="#6">The "spline algorithm" with p=1</a></li></ul></div><pre class="codeinput"><span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="comment">%   Computational illustration for Chapter 22</span>
+<span class="comment">%       Semidefinite Programming in Action</span>
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+clear <span class="string">all</span>; clc;
+<span class="comment">% CVX is needed to run this file</span>
+<span class="comment">% comment out the next line if MOSEK is not installed</span>
+cvx_solver <span class="string">mosek</span>
+</pre><pre class="codeoutput">Warning: The following errors were issued when initializing the solvers:
+    Gurobi: No valid Gurobi license was found.
+Please check your installation and re-run CVX_SETUP.
+These solvers are unavailable for this session. 
+</pre><h2>generate the data<a name="2"></a></h2><pre class="codeinput">m = 15;
+x = linspace(-pi,0,m);
+y = (x.^2)';
+<span class="comment">% define the matrix M involved in all the constraints</span>
+n = 50;
+M = zeros(m,n+1);
+<span class="keyword">for</span> j=0:n
+        M(:,j+1) = cos(j*x);
+<span class="keyword">end</span>
+<span class="comment">% introduce a grid used for plotting purposes</span>
+grid_size = 1000;
+grid = linspace(-pi,pi,grid_size)';
+</pre><h2>The "spline algorithm" with p=2<a name="3"></a></h2><pre class="codeinput">k = 2;
+D = sqrt(pi)*diag((0:n).^k);
+<span class="comment">% trigonometric coefficients computed as solution to an SDP</span>
+cvx_begin <span class="string">quiet</span>
+variable <span class="string">a_2(n+1)</span>
+variable <span class="string">c</span>
+minimize <span class="string">c</span>
+subject <span class="string">to</span>
+M*a_2 == y;
+[c*eye(n+1), D*a_2; (D*a_2)', c] == semidefinite(n+2)
+cvx_end
+<span class="comment">% plotting the recovered function</span>
+recovered_2 = zeros(grid_size,1);
+recovered_2k = zeros(grid_size,1);
+<span class="keyword">for</span> j=0:n
+    recovered_2 = recovered_2 + a_2(j+1)*cos(j*grid);
+    recovered_2k = recovered_2k - a_2(j+1)*j^k*cos(j*grid);
+<span class="keyword">end</span>
+figure(1)
+subplot(2,1,1);
+plot(x,y,<span class="string">'r*'</span>,grid,recovered_2,<span class="string">'b-'</span>)
+legend(<span class="string">'observations'</span>,<span class="string">'recovered function f'</span>)
+title(strcat(<span class="string">'p=2 (n='</span>,num2str(n),<span class="string">', k='</span>,num2str(k),<span class="string">', m='</span>,num2str(m),<span class="string">')'</span>))
+xlabel(<span class="string">'-\pi &lt; x &lt; \pi'</span>)
+ylabel(<span class="string">'f'</span>)
+subplot(2,1,2);
+plot(grid,recovered_2k,<span class="string">'b-'</span>)
+title(<span class="string">'the k-th derivative of f'</span>)
+xlabel(<span class="string">'-\pi &lt; x &lt; \pi'</span>)
+ylabel(<span class="string">'f^{(k)}'</span>)
+</pre><img vspace="5" hspace="5" src="Chapter22_01.png" style="width:560px;height:420px;" alt=""> <h2>an aside: verification of the closed-form formula<a name="4"></a></h2><pre class="codeinput">Delta = diag((1:n).^k);
+A = M(:,2:end)/Delta;
+B = inv(A*A');
+a_sharp_0 = sum(y'.*sum(B))/sum(sum(B));
+a_sharp = [a_sharp_0; Delta\( A'*B*(y-a_sharp_0) )];
+norm(a_2-a_sharp)
+</pre><pre class="codeoutput">
+ans =
+
+   2.4600e-09
+
+</pre><h2>The "spline algorithm" with p=inf<a name="5"></a></h2><pre class="codeinput">cvx_begin <span class="string">quiet</span>
+variable <span class="string">a_inf(n+1)</span>
+variable <span class="string">c</span>
+variable <span class="string">Qp(n+1,n+1)</span> <span class="string">semidefinite</span>
+variable <span class="string">Qm(n+1,n+1)</span> <span class="string">semidefinite</span>
+expression <span class="string">up(n)</span>
+expression <span class="string">um(n)</span>
+expression <span class="string">rhs(n)</span>
+<span class="keyword">for</span> j=1:n
+    up(j) = sum(diag(Qp,-j));
+    um(j) = sum(diag(Qm,-j));
+    rhs(j) = a_inf(j+1)*j^k/2;
+<span class="keyword">end</span>
+minimize <span class="string">c</span>
+subject <span class="string">to</span>
+M*a_inf == y;
+trace(Qp) == c
+trace(Qm) == c
+up == +rhs
+um == -rhs
+cvx_end
+<span class="comment">% plotting the recovered function</span>
+recovered_inf = zeros(grid_size,1);
+recovered_infk = zeros(grid_size,1);
+<span class="keyword">for</span> j=0:n
+    recovered_inf = recovered_inf + a_inf(j+1)*cos(j*grid);
+    recovered_infk = recovered_infk - a_inf(j+1)*j^k*cos(j*grid);
+<span class="keyword">end</span>
+figure(2)
+subplot(2,1,1);
+plot(x,y,<span class="string">'r*'</span>,grid,recovered_inf,<span class="string">'b-'</span>)
+legend(<span class="string">'observations'</span>,<span class="string">'recovered function f'</span>)
+title(strcat(<span class="string">'p=\infty (n='</span>,num2str(n),<span class="string">', k='</span>,num2str(k),<span class="string">', m='</span>,num2str(m),<span class="string">')'</span>))
+xlabel(<span class="string">'-\pi &lt; x &lt; \pi'</span>)
+ylabel(<span class="string">'f'</span>)
+subplot(2,1,2);
+plot(grid,recovered_infk,<span class="string">'b-'</span>)
+title(<span class="string">'the k-th derivative of f'</span>)
+xlabel(<span class="string">'-\pi &lt; x &lt; \pi'</span>)
+ylabel(<span class="string">'f^{(k)}'</span>)
+</pre><img vspace="5" hspace="5" src="Chapter22_02.png" style="width:560px;height:420px;" alt=""> <h2>The "spline algorithm" with p=1<a name="6"></a></h2><pre class="codeinput">N = 100;
+cvx_begin <span class="string">quiet</span>
+variable <span class="string">a_1(n+1)</span>
+variable <span class="string">up(N+1)</span>
+variable <span class="string">um(N+1)</span>
+expression <span class="string">rhs(N+1)</span>
+<span class="keyword">for</span> j=1:n+1
+    rhs(j) = a_1(j)*(j-1)^k;
+<span class="keyword">end</span>
+minimize <span class="string">up(1)+um(1)</span>
+subject <span class="string">to</span>
+M*a_1 == y;
+toeplitz(up) == semidefinite(N+1)
+toeplitz(um) == semidefinite(N+1)
+up - um == pi*rhs
+cvx_end
+<span class="comment">% plotting the recovered function</span>
+recovered_1 = zeros(grid_size,1);
+recovered_1k = zeros(grid_size,1);
+<span class="keyword">for</span> j=0:n
+    recovered_1 = recovered_1 + a_1(j+1)*cos(j*grid);
+    recovered_1k = recovered_1k - a_1(j+1)*j^k*cos(j*grid);
+<span class="keyword">end</span>
+figure(3)
+subplot(2,1,1);
+plot(x,y,<span class="string">'r*'</span>,grid,recovered_1,<span class="string">'b-'</span>)
+legend(<span class="string">'observations'</span>,<span class="string">'recovered function f'</span>)
+title(strcat(<span class="string">'p=1 (n='</span>,num2str(n),<span class="string">', k='</span>,num2str(k),<span class="string">', m='</span>,num2str(m),<span class="string">')'</span>))
+xlabel(<span class="string">'-\pi &lt; x &lt; \pi'</span>)
+ylabel(<span class="string">'y'</span>)
+subplot(2,1,2);
+plot(grid,recovered_1k,<span class="string">'b-'</span>)
+title(<span class="string">'the k-th derivative of f'</span>)
+xlabel(<span class="string">'-\pi &lt; x &lt; \pi'</span>)
+ylabel(<span class="string">'f^{(k)}'</span>)
+</pre><img vspace="5" hspace="5" src="Chapter22_03.png" style="width:560px;height:420px;" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   Computational illustration for Chapter 22
+%       Semidefinite Programming in Action      
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+clear all; clc;
+% CVX is needed to run this file
+% comment out the next line if MOSEK is not installed
+cvx_solver mosek 
+
+
+%% generate the data
+m = 15;
+x = linspace(-pi,0,m);
+y = (x.^2)';
+% define the matrix M involved in all the constraints
+n = 50;
+M = zeros(m,n+1);
+for j=0:n
+        M(:,j+1) = cos(j*x);
+end
+% introduce a grid used for plotting purposes
+grid_size = 1000;
+grid = linspace(-pi,pi,grid_size)';
+
+
+%% The "spline algorithm" with p=2
+
+k = 2;
+D = sqrt(pi)*diag((0:n).^k);
+% trigonometric coefficients computed as solution to an SDP
+cvx_begin quiet
+variable a_2(n+1)
+variable c
+minimize c
+subject to
+M*a_2 == y;
+[c*eye(n+1), D*a_2; (D*a_2)', c] == semidefinite(n+2)
+cvx_end
+% plotting the recovered function
+recovered_2 = zeros(grid_size,1);
+recovered_2k = zeros(grid_size,1);
+for j=0:n
+    recovered_2 = recovered_2 + a_2(j+1)*cos(j*grid);
+    recovered_2k = recovered_2k - a_2(j+1)*j^k*cos(j*grid);
+end
+figure(1)
+subplot(2,1,1);
+plot(x,y,'r*',grid,recovered_2,'b-')
+legend('observations','recovered function f')
+title(strcat('p=2 (n=',num2str(n),', k=',num2str(k),', m=',num2str(m),')'))
+xlabel('-\pi < x < \pi') 
+ylabel('f')
+subplot(2,1,2);
+plot(grid,recovered_2k,'b-')
+title('the k-th derivative of f')
+xlabel('-\pi < x < \pi') 
+ylabel('f^{(k)}')
+
+%% an aside: verification of the closed-form formula 
+Delta = diag((1:n).^k);
+A = M(:,2:end)/Delta;
+B = inv(A*A');
+a_sharp_0 = sum(y'.*sum(B))/sum(sum(B));
+a_sharp = [a_sharp_0; Delta\( A'*B*(y-a_sharp_0) )];
+norm(a_2-a_sharp)
+
+
+%% The "spline algorithm" with p=inf
+
+cvx_begin quiet
+variable a_inf(n+1)
+variable c
+variable Qp(n+1,n+1) semidefinite
+variable Qm(n+1,n+1) semidefinite
+expression up(n) 
+expression um(n)
+expression rhs(n)
+for j=1:n
+    up(j) = sum(diag(Qp,-j));
+    um(j) = sum(diag(Qm,-j));
+    rhs(j) = a_inf(j+1)*j^k/2;
+end
+minimize c
+subject to
+M*a_inf == y;
+trace(Qp) == c
+trace(Qm) == c
+up == +rhs
+um == -rhs
+cvx_end
+% plotting the recovered function
+recovered_inf = zeros(grid_size,1);
+recovered_infk = zeros(grid_size,1);
+for j=0:n
+    recovered_inf = recovered_inf + a_inf(j+1)*cos(j*grid);
+    recovered_infk = recovered_infk - a_inf(j+1)*j^k*cos(j*grid);
+end
+figure(2)
+subplot(2,1,1);
+plot(x,y,'r*',grid,recovered_inf,'b-')
+legend('observations','recovered function f')
+title(strcat('p=\infty (n=',num2str(n),', k=',num2str(k),', m=',num2str(m),')'))
+xlabel('-\pi < x < \pi') 
+ylabel('f')
+subplot(2,1,2);
+plot(grid,recovered_infk,'b-')
+title('the k-th derivative of f')
+xlabel('-\pi < x < \pi') 
+ylabel('f^{(k)}')
+
+%% The "spline algorithm" with p=1
+
+N = 100;
+cvx_begin quiet
+variable a_1(n+1)
+variable up(N+1)
+variable um(N+1)
+expression rhs(N+1)
+for j=1:n+1
+    rhs(j) = a_1(j)*(j-1)^k;
+end
+minimize up(1)+um(1)
+subject to
+M*a_1 == y;
+toeplitz(up) == semidefinite(N+1)
+toeplitz(um) == semidefinite(N+1)
+up - um == pi*rhs
+cvx_end
+% plotting the recovered function
+recovered_1 = zeros(grid_size,1);
+recovered_1k = zeros(grid_size,1);
+for j=0:n
+    recovered_1 = recovered_1 + a_1(j+1)*cos(j*grid);
+    recovered_1k = recovered_1k - a_1(j+1)*j^k*cos(j*grid);
+end
+figure(3)
+subplot(2,1,1);
+plot(x,y,'r*',grid,recovered_1,'b-')
+legend('observations','recovered function f')
+title(strcat('p=1 (n=',num2str(n),', k=',num2str(k),', m=',num2str(m),')'))
+xlabel('-\pi < x < \pi') 
+ylabel('y')
+subplot(2,1,2);
+plot(grid,recovered_1k,'b-')
+title('the k-th derivative of f')
+xlabel('-\pi < x < \pi') 
+ylabel('f^{(k)}')
+##### SOURCE END #####
+--></body></html>
