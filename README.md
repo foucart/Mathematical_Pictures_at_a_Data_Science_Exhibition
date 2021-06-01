@@ -27,6 +27,10 @@ Chapter 03: Learnability for Binary Classification
 
 Chapter 04: Support Vector Machines
 
+[MATLAB](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/MATLAB/web/Chapter04_html/Chapter04.html)
+/ 
+[Python](https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/Python/Chapter04.ipynb)
+
 Chapter 05: Reproducing Kernel Hilbert Spaces
 
 Chapter 06: Regression and Regularization
