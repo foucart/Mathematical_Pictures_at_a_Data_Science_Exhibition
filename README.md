@@ -10,12 +10,14 @@ The illustrations were written by Simon Foucart and Chunyang Liao. Help from Tus
 
 Reproducing the illustrations sometimes requires additional software to be installed: in MATLAB, CVX (http://cvxr.com/cvx/) is necessary, and in Python, CVXPY (https://www.cvxpy.org/) is necessary.
 
+##
 ### TABLE OF CONTENT
 
 #### PART ONE: MACHINE LEARNING
 
 Chapter 01: Rudiments of Statistical Learning Theory
-[MATLAB](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/MATLAB/Chapter01/html/Chapter01.html)
+
+[MATLAB](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/MATLAB/web/Chapter01_html/Chapter01.html)
 / 
 [Python](https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/Python/Chapter01.ipynb)
 
