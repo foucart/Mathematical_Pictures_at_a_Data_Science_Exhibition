@@ -15,8 +15,7 @@ Reproducing the illustrations sometimes requires additional software to be insta
 
 #### PART ONE: MACHINE LEARNING
 
-Chapter 01: Rudiments of Statistical Learning Theory
-
+Chapter 01: Rudiments of Statistical Learning Theory |
 [MATLAB](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/MATLAB/web/Chapter01_html/Chapter01.html)
 / 
 [Python](https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/Python/Chapter01.ipynb)
@@ -25,8 +24,7 @@ Chapter 02: Vapnik--Chervonenkis Dimension
 
 Chapter 03: Learnability for Binary Classification
 
-Chapter 04: Support Vector Machines
-
+Chapter 04: Support Vector Machines |
 [MATLAB](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/MATLAB/web/Chapter04_html/Chapter04.html)
 / 
 [Python](https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/Python/Chapter04.ipynb)
