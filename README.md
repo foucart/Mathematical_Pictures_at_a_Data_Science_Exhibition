@@ -32,6 +32,9 @@ Chapter 04: Support Vector Machines |
 Chapter 05: Reproducing Kernel Hilbert Spaces
 
 Chapter 06: Regression and Regularization
+[MATLAB]
+/ 
+[Python](https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/Python/Chapter06.ipynb)
 
 Chapter 07: Clustering
 
