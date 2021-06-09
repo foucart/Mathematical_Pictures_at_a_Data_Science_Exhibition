@@ -18,7 +18,7 @@ Reproducing the illustrations sometimes requires additional software to be insta
 Chapter 01: Rudiments of Statistical Learning Theory |
 [MATLAB](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/MATLAB/web/Chapter01.html)
 / 
-[Python](https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/Python/web/Chapter01.html)
+[Python](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/Python/web/Chapter01.html)
 
 Chapter 02: Vapnik--Chervonenkis Dimension
 
@@ -27,19 +27,19 @@ Chapter 03: Learnability for Binary Classification
 Chapter 04: Support Vector Machines |
 [MATLAB](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/MATLAB/web/Chapter04.html)
 / 
-[Python](https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/Python/web/Chapter04.html)
+[Python](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/Python/web/Chapter04.html)
 
 Chapter 05: Reproducing Kernel Hilbert Spaces
 
 Chapter 06: Regression and Regularization
 [MATLAB](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/MATLAB/web/Chapter06.html)
 / 
-[Python](https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/Python/web/Chapter06.html)
+[Python](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/Python/web/Chapter06.html)
 
 Chapter 07: Clustering
 [MATLAB]
 / 
-[Python](https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/Python/web/Chapter07.html)
+[Python](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/Python/web/Chapter07.html)
 
 Chapter 08: Dimension Reduction
 
