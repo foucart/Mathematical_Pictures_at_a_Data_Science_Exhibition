@@ -31,17 +31,17 @@ Chapter 04: Support Vector Machines |
 
 Chapter 05: Reproducing Kernel Hilbert Spaces
 
-Chapter 06: Regression and Regularization
+Chapter 06: Regression and Regularization | 
 [MATLAB](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/MATLAB/web/Chapter06.html)
 / 
 [Python](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/Python/web/Chapter06.html)
 
-Chapter 07: Clustering
+Chapter 07: Clustering | 
 [MATLAB](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/MATLAB/web/Chapter07.html)
 / 
 [Python](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/Python/web/Chapter07.html)
 
-Chapter 08: Dimension Reduction
+Chapter 08: Dimension Reduction | 
 [MATLAB](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/MATLAB/web/Chapter08.html)
 / 
 [Python]
@@ -62,7 +62,7 @@ Chapter 13: Quasi-Monte Carlo Integration
 
 #### PART THREE: COMPRESSIVE SENSING
 
-Chapter 14: Sparse Recovery from Linear Observations
+Chapter 14: Sparse Recovery from Linear Observations | 
 [MATLAB](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/MATLAB/web/Chapter14.html)
 / 
 [Python]
