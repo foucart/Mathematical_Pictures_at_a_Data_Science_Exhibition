@@ -44,7 +44,7 @@ Chapter 07: Clustering |
 Chapter 08: Dimension Reduction | 
 [MATLAB](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/MATLAB/web/Chapter08.html)
 / 
-[Python]
+[Python](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/Python/web/Chapter08.html)
 
 
 #### PART TWO: OPTIMAL RECOVERY
