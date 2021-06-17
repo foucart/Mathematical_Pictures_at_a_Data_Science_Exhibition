@@ -65,7 +65,7 @@ Chapter 13: Quasi-Monte Carlo Integration
 Chapter 14: Sparse Recovery from Linear Observations | 
 [MATLAB](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/MATLAB/web/Chapter14.html)
 / 
-[Python]
+[Python](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/Python/web/Chapter14.html)
 
 Chapter 15: The Complexity of Sparse Recovery
 
