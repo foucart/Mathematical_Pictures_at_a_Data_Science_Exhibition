@@ -68,6 +68,9 @@ Chapter 14: Sparse Recovery from Linear Observations |
 [Python](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/Python/web/Chapter14.html)
 
 Chapter 15: The Complexity of Sparse Recovery
+[MATLAB](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/MATLAB/web/Chapter15.html)
+/ 
+[Python]
 
 Chapter 16: Low-Rank Recovery from Linear Observations
 
