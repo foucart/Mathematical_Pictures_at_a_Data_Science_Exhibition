@@ -77,7 +77,10 @@ Chapter 16: Low-Rank Recovery from Linear Observations |
 / 
 [Python]
 
-Chapter 17: Sparse Recovery from One-Bit Observations
+Chapter 17: Sparse Recovery from One-Bit Observations | 
+[MATLAB](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/MATLAB/web/Chapter17.html)
+/ 
+[Python]
 
 Chapter 18: Group Testing
 
