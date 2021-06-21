@@ -85,7 +85,7 @@ Chapter 17: Sparse Recovery from One-Bit Observations |
 Chapter 18: Group Testing |
 [MATLAB](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/MATLAB/web/Chapter18.html)
 / 
-[Python]
+[Python](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/Python/web/Chapter18.html)
 
 
 #### PART FOUR: OPTIMIZATION
