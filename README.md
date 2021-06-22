@@ -92,7 +92,10 @@ Chapter 18: Group Testing |
 
 Chapter 19: Basic Convex Optimization
 
-Chapter 20: Snippets of Linear Programming
+Chapter 20: Snippets of Linear Programming |
+[MATLAB](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/MATLAB/web/Chapter20.html)
+/ 
+[Python]
 
 Chapter 21: Duality Theory and Practice
 
