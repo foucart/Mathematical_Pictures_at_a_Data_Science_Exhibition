@@ -102,7 +102,7 @@ Chapter 21: Duality Theory and Practice
 Chapter 22: Semidefinite Programming in Action
 [MATLAB](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/MATLAB/web/Chapter22.html)
 / 
-[Python]
+[Python](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/Python/web/Chapter22.html)
 
 Chapter 23: Instances of Nonconvex Optimization
 
