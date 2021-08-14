@@ -51,11 +51,13 @@ Chapter 08: Dimension Reduction |
 
 Chapter 09: Foundational Results
 
-Chapter 10: Approximability Models
+Chapter 10: Approximability Models |
+[MATLAB](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/MATLAB/web/Chapter10.html)
+/ [Python] 
 
 Chapter 11: Ideal Selection of Observation Schemes
 
-Chapter 12: Curse of Dimensionalilty
+Chapter 12: Curse of Dimensionality
 
 Chapter 13: Quasi-Monte Carlo Integration
 
