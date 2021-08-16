@@ -53,7 +53,7 @@ Chapter 09: Foundational Results
 
 Chapter 10: Approximability Models |
 [MATLAB](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/MATLAB/web/Chapter10.html)
-/ [Python] 
+/ [Python](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/Python/web/Chapter10.html) 
 
 Chapter 11: Ideal Selection of Observation Schemes
 
