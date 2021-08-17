@@ -102,7 +102,7 @@ Chapter 20: Snippets of Linear Programming |
 Chapter 21: Duality Theory and Practice |
 [MATLAB](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/MATLAB/web/Chapter21.html)
 / 
-[Python]
+[Python](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/Python/web/Chapter21.html)
 
 Chapter 22: Semidefinite Programming in Action |
 [MATLAB](https://htmlpreview.github.io/?https://github.com/foucart/Mathematical_Pictures_at_a_Data_Science_Exhibition/blob/master/MATLAB/web/Chapter22.html)
