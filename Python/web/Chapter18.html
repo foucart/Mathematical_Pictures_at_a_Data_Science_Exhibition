@@ -14362,8 +14362,8 @@ where each $R_i$ is a subset of $\{1,\dots,N\}$.</p>
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
 <pre>The original and recovered supports agree:
-[ 13 342 374 398 852]
-[ 13 342 374 398 852]
+[141 260 425 723 835]
+[141 260 425 723 835]
 </pre>
 </div>
 </div>
@@ -14427,7 +14427,7 @@ where each $R_i$ is a subset of $\{1,\dots,N\}$.</p>
 <span class="n">m</span> <span class="o">=</span> <span class="n">p</span><span class="o">**</span><span class="mi">2</span>                <span class="c1"># the number of tests, identified with rows of A</span>
 <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">m</span><span class="p">,</span><span class="n">N</span><span class="p">))</span>
 <span class="n">M</span> <span class="o">=</span> <span class="n">value_matrix</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">d</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
     <span class="n">A</span><span class="p">[</span><span class="n">j</span><span class="o">*</span><span class="n">p</span><span class="p">:(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">p</span><span class="p">,:]</span> <span class="o">=</span> <span class="mi">1</span><span class="o">*</span><span class="p">(</span><span class="n">M</span><span class="o">==</span><span class="n">j</span><span class="p">)</span>
 </pre></div>
 
@@ -14530,8 +14530,8 @@ where each $R_i$ is a subset of $\{1,\dots,N\}$.</p>
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
 <pre>The original and recovered supports agree:
-[ 9389 11317 24810 27649]
-[ 9389 11317 24810 27649]
+[10972 15797 17949 19563]
+[10972 15797 17949 19563]
 </pre>
 </div>
 </div>
